@@ -1,9 +1,16 @@
 {
   "name": "SkillAx",
   "tagline": "Chillax. Load the skill. Ship the work.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "spec": "spec/SKILLAX.md",
-  "skills": [
+  "stack": "STACK.md",
+  "prompts": [
+    "prompts/extract.md",
+    "prompts/audit.md",
+    "prompts/kernel.md"
+  ],
+  "kernel": ["skillax"],
+  "apps": [
     {
       "name": "sovereign-control-plane",
       "path": "skills/sovereign-control-plane/SKILL.md",
@@ -17,17 +24,13 @@
     {
       "name": "consultative-service-operations-os",
       "path": "skills/consultative-service-operations-os/SKILL.md",
-      "job": "High-touch appointment and mentorship operations"
+      "job": "High-touch appointment and mentorship operations",
+      "rename": "consultative-service-ops"
     },
     {
       "name": "constraint-based-planning-engine",
       "path": "skills/constraint-based-planning-engine/SKILL.md",
       "job": "Planning under hard constraints"
-    },
-    {
-      "name": "productized-knowledge-to-asset-system",
-      "path": "skills/productized-knowledge-to-asset-system/SKILL.md",
-      "job": "Turn expertise into sellable skills"
     },
     {
       "name": "structured-document-compliance-agent",
@@ -38,6 +41,14 @@
       "name": "persistent-character-world-system",
       "path": "skills/persistent-character-world-system/SKILL.md",
       "job": "Long-running coherent narrative universes"
+    }
+  ],
+  "merged": [
+    {
+      "name": "productized-knowledge-to-asset-system",
+      "into": "skillax",
+      "path": "skills/productized-knowledge-to-asset-system/SKILL.md",
+      "status": "historical example"
     }
   ]
 }
