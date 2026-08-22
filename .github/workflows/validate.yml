@@ -12,3 +12,4 @@ jobs:
           python-version: "3.12"
       - run: python3 scripts/validate.py --all
       - run: python3 scripts/rank_test.py
+      - run: python3 scripts/measure.py packs/skillax --expect PASS
