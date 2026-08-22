@@ -33,7 +33,7 @@ python3 SkillAx/scripts/validate.py --all
 
 Works with Claude Code, Codex, Cursor, Grok, Hermes, and any SKILL.md harness.
 
-## Reference pack (v0.1)
+## Reference pack (v0.2)
 
 | Skill | Job |
 |-------|-----|
@@ -41,11 +41,12 @@ Works with Claude Code, Codex, Cursor, Grok, Hermes, and any SKILL.md harness.
 | [cinematic-narrative-engine](skills/cinematic-narrative-engine/SKILL.md) | Repeatable short-form cinematic systems |
 | [consultative-service-operations-os](skills/consultative-service-operations-os/SKILL.md) | High-touch appointment + mentorship operations |
 | [constraint-based-planning-engine](skills/constraint-based-planning-engine/SKILL.md) | Plans that respect hard constraints |
-| [productized-knowledge-to-asset-system](skills/productized-knowledge-to-asset-system/SKILL.md) | Turn expertise into sellable skills |
 | [structured-document-compliance-agent](skills/structured-document-compliance-agent/SKILL.md) | High-stakes documents under constraints |
 | [persistent-character-world-system](skills/persistent-character-world-system/SKILL.md) | Long-running coherent narrative universes |
 
-Read the [SkillAx Spec](spec/SKILLAX.md). Launch copy is in [LAUNCH.md](LAUNCH.md). Agents: [llms.txt](llms.txt).
+Stack: [STACK.md](STACK.md). Spec: [spec/SKILLAX.md](spec/SKILLAX.md). Prompts: [prompts/](prompts/). Launch: [LAUNCH.md](LAUNCH.md). Agents: [llms.txt](llms.txt).
+
+`productized-knowledge-to-asset-system` is merged into SkillAx. Historical file only.
 
 ## Canonical axioms
 
