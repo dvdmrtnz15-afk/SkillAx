@@ -1,0 +1,21 @@
+# SkillAx
+
+> Chillax. Load the skill. Ship the work.
+
+Axiom-boiled agent skills. Not prompt dumps.
+
+## Spec
+- https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/spec/SKILLAX.md
+- https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/CATALOG.json
+
+## Reference skills
+- https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/skills/sovereign-control-plane/SKILL.md
+- https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/skills/cinematic-narrative-engine/SKILL.md
+- https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/skills/consultative-service-operations-os/SKILL.md
+- https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/skills/constraint-based-planning-engine/SKILL.md
+- https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/skills/productized-knowledge-to-asset-system/SKILL.md
+- https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/skills/structured-document-compliance-agent/SKILL.md
+- https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/skills/persistent-character-world-system/SKILL.md
+
+## Validate
+- https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/scripts/validate.py
