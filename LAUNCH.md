@@ -37,8 +37,16 @@ Show HN: SkillAx – axiom-boiled agent skills (not another prompt dump)
 
 Body = the same three lines as the launch post.
 
-## 4. Conversion closer (DMs only, not in the public post)
+## 4. Conversion (DMs only, not in the public post)
+
+Public spec stays MIT. Paid conversion stays off the catalog. This is not a seventh skill.
+
+Use [CONVERT.md](CONVERT.md) and [prompts/convert.md](prompts/convert.md).
+
+Public closer only:
 
 ```
 If you have operating knowledge trapped in your head, I will convert it into a SkillAx pack others can install. First three founders this week.
 ```
+
+Ask for one corpus (SOP, ticket pile, or recorded loop). Do not book a call.

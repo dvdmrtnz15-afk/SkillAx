@@ -1,0 +1,11 @@
+job:
+corpus: sop | tickets | loop
+corpus_url_or_paste:
+buyer: owner | ops-lead | client
+stops_buying:
+must_handle:
+must_refuse:
+may_call:
+must_never:
+halt_test:
+private:
