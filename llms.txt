@@ -8,11 +8,14 @@ Axiom-boiled agent skills. Not prompt dumps.
 - https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/spec/SKILLAX.md
 - https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/STACK.md
 - https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/CATALOG.json
+- https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/CONVERT.md
 
 ## Prompts
 - https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/prompts/extract.md
 - https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/prompts/audit.md
 - https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/prompts/kernel.md
+- https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/prompts/convert.md
+- https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/prompts/convert-intake.txt
 
 ## App skills
 - https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/skills/sovereign-control-plane/SKILL.md
