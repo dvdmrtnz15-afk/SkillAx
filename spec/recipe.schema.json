@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skillax.dev/spec/recipe.schema.json",
+  "title": "SkillAx recipe",
+  "type": "object",
+  "required": ["name", "job", "slots"],
+  "properties": {
+    "name": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "job": { "type": "string" },
+    "slots": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["skill", "emits"],
+        "properties": {
+          "skill": { "type": "string" },
+          "emits": { "type": "string" }
+        }
+      }
+    },
+    "forbid": { "type": "array", "items": { "type": "string" } },
+    "promote": { "type": "string" }
+  }
+}

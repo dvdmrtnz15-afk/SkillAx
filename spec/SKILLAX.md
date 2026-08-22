@@ -1,20 +1,32 @@
-# SkillAx Spec v0.1
+# SkillAx Spec v0.3
 
 A SkillAx skill is a loadable instruction package that specializes an agent for a job the base model does not already do well.
+
+Level 1 = a `SKILL.md`.
+Level 2 = typed axioms + recipes + a fixture the skill must pass.
+
+`SKILL.md` remains the runtime export. Axioms and recipes are the source.
 
 ## File contract
 
 ```
 skill-name/
-  SKILL.md          required
-  references/       optional, loaded on demand
-  scripts/          optional, deterministic helpers
-  assets/           optional, templates not loaded into context
+  SKILL.md          required export
+  axioms.json       optional L2 source
+  references/
+  scripts/
+  assets/
+
+recipes/
+  recipe-name.json  composition of existing skills — not a new skill
+
+fixtures/
+  skill-name/
+    in.md           corpus or ticket
+    out.md          required refusals + shape
 ```
 
-`skill-name` is kebab-case, 2–64 characters, starts and ends with a letter or digit, no consecutive hyphens. It must match the `name` field.
-
-## SKILL.md frontmatter
+## SKILL.md frontmatter (unchanged L1)
 
 ```yaml
 ---
@@ -23,66 +35,58 @@ description: What it does and when to use it. Trigger words live here. Plain YAM
 ---
 ```
 
-Hard rules for `description`:
+Description rules: single line, no quoting, no colon-space, no `<>`, max 1024 characters, capability + triggers.
 
-- Single line
-- No quoting
-- No `: ` (colon-space)
-- No `<` or `>`
-- Max 1024 characters
-- Include both capability and trigger scenarios
+Body: Core Mandate (≤4 interacting constraints), Operating Principles, Analysis Sequence, Response shape. Under 500 lines.
 
-The description is the only thing visible before load. Make it earn that slot.
+## Typed axioms
 
-## Body rules
+An axiom is a constraint with a type, not a slogan.
 
-Write in imperative form. Challenge every paragraph: does this justify its token cost?
+Types:
+- `job` — what the operator does
+- `refuse` — what must not be encoded
+- `load` — when this skill may wake
+- `bind` — what it may call (other skills, recipes, never a new OS)
+- `safety` — floor that fails closed
 
-Required sections for a SkillAx reference skill:
+Count: 3–5 total. At most one `job`. At least one `refuse`.
 
-1. **Core Mandate** — 3–5 ranked properties
-2. **Operating Principles** — non-obvious constraints
-3. **Required Analysis Sequence** — what to determine before answering
-4. **Response Requirements** — the deliverable shape
+See `spec/axiom.schema.json`.
 
-Keep SKILL.md under 500 lines. Move depth to `references/`.
+## Recipes
 
-## Cognitive load
+A recipe names an arrangement of existing skills. It is not a seventh skill.
 
-Treat working memory as ~4 chunks.
+- Ingredients = skills that already exist
+- Slots = order and what each skill is allowed to emit
+- Product-owned if content-bound
+- Promote a *generic* extract only after two consumers
 
-- Metadata always visible
-- Body loaded on trigger
-- References loaded only when needed
-- Never dump a corpus into the body
+See `spec/recipe.schema.json` and `recipes/extract-audit-kernel.json`.
 
-## Naming
+## Fixtures
 
-- Lead with the capability
-- Prefer the job-to-be-done over project mythology
-- Test: would a stranger searching for this job use these words?
+A skill is not done when it parses. It is done when `fixtures/<name>/in.md` produces the refusals and shape in `out.md`.
 
-## Extraction (how a SkillAx skill is born)
+Minimum fixture: one job cluster + one pile that must be refused.
 
-1. Cluster a corpus by repeated procedural patterns
-2. Drop anything a strong base model already does well
-3. Rank survivors by reuse, defensibility, and buyer
-4. Generalize to homeogenic form without deleting the specialty core
-5. Boil to canonical axioms
-6. Optimize the name
-7. Formalize and validate
+## Extraction
+
+1. Cluster procedures
+2. Drop base-model knowledge
+3. Rank by reuse, buyer, moat
+4. Homeogenic generalize
+5. Type the axioms
+6. Name the job
+7. Formalize SKILL.md
+8. Add fixture
+9. Validate structure + fixture
 
 ## Safety floor
 
-Reject or flag skills that:
-
-- Request credentials, tokens, or private keys in prompts
-- Instruct unrestricted SSRF, DNS rebinding, or sandbox escape
-- Target minors
-- Encode criminal methods
-
-This is a floor, not a full security product.
+Reject: credentials in prompts, unrestricted SSRF/DNS-rebinding/sandbox escape, targeting minors, criminal methods.
 
 ## Compatibility
 
-SkillAx SKILL.md files are intended to work with any harness that loads a YAML-frontmatter markdown skill (Claude Code skills, Cursor skills, Grok skills, Hermes plugins, and similar).
+Runtime is still any SKILL.md harness. L2 files are SkillAx-native; other harnesses may ignore them.

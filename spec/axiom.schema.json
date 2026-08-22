@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skillax.dev/spec/axiom.schema.json",
+  "title": "SkillAx axioms",
+  "type": "object",
+  "required": ["skill", "axioms"],
+  "properties": {
+    "skill": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "axioms": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "text"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "enum": ["job", "refuse", "load", "bind", "safety"] },
+          "text": { "type": "string", "maxLength": 240 }
+        }
+      }
+    }
+  }
+}

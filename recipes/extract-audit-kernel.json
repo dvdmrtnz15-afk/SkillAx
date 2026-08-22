@@ -1,0 +1,15 @@
+{
+  "name": "extract-audit-kernel",
+  "job": "Turn one corpus cluster into a validated skill without a new OS",
+  "slots": [
+    { "skill": "skillax", "emits": "name, SKILL.md draft, refusal list" },
+    { "skill": "skillax", "emits": "load audit of the draft (intrinsic/extraneous/germane)" },
+    { "skill": "skillax", "emits": "kernel vs app class for the new name" }
+  ],
+  "forbid": [
+    "creating a fourth skill for the pipeline",
+    "TrueNorth scorecard footer",
+    "origin-story names"
+  ],
+  "promote": "Do not promote this recipe into a skill. It is an arrangement of SkillAx."
+}
