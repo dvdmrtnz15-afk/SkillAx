@@ -43,6 +43,7 @@ Works with Claude Code, Codex, Cursor, Grok, Hermes, and any SKILL.md harness.
 | [constraint-based-planning-engine](skills/constraint-based-planning-engine/SKILL.md) | Plans that respect hard constraints |
 | [structured-document-compliance-agent](skills/structured-document-compliance-agent/SKILL.md) | High-stakes documents under constraints |
 | [persistent-character-world-system](skills/persistent-character-world-system/SKILL.md) | Long-running coherent narrative universes |
+| [human-adaptive-communication](skills/human-adaptive-communication/SKILL.md) | Workplace messages adapted to people, power, stakes, and outcome |
 
 Stack: [STACK.md](STACK.md). Spec: [spec/SKILLAX.md](spec/SKILLAX.md). Prompts: [prompts/](prompts/). Launch: [LAUNCH.md](LAUNCH.md). Agents: [llms.txt](llms.txt).
 

@@ -24,6 +24,7 @@ Axiom-boiled agent skills. Not prompt dumps.
 - https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/skills/constraint-based-planning-engine/SKILL.md
 - https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/skills/structured-document-compliance-agent/SKILL.md
 - https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/skills/persistent-character-world-system/SKILL.md
+- https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/skills/human-adaptive-communication/SKILL.md
 
 ## Validate
 - https://github.com/dvdmrtnz15-afk/SkillAx/blob/main/scripts/validate.py

@@ -41,6 +41,11 @@
       "name": "persistent-character-world-system",
       "path": "skills/persistent-character-world-system/SKILL.md",
       "job": "Long-running coherent narrative universes"
+    },
+    {
+      "name": "human-adaptive-communication",
+      "path": "skills/human-adaptive-communication/SKILL.md",
+      "job": "Workplace messages adapted to relationship, power, stakes, and outcome"
     }
   ],
   "merged": [
