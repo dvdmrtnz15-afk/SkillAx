@@ -14,6 +14,7 @@ CASES = [
     ("vertical six-second reels", "cinematic-narrative-engine"),
     ("high stakes legal policy document under constraints", "structured-document-compliance-agent"),
     ("plan meals with allergens and quotas", "constraint-based-planning-engine"),
+    ("make this email warmer", "human-adaptive-communication"),
     ("card", "none"),
 ]
 
