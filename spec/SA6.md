@@ -38,8 +38,8 @@ Class is the *kind of job*, not the project myth.
 | 400 | Constraint planning. Hard limits first. |
 | 500 | High-stakes documents. |
 | 600 | Persistent worlds and characters. |
-| 700 | Reserved. Empty on purpose. |
-| 800 | Recipes (arrangements of 000–600). Not skills. |
+| 700 | Adaptive human communication. Workplace messages, tone, power, stakes. |
+| 800 | Recipes (arrangements of 000–700). Not skills. |
 | 900 | Private kernels (TrueNorth). Not published. |
 
 Notation: `class.subclass.item` plus kebab name.
@@ -52,6 +52,7 @@ Notation: `class.subclass.item` plus kebab name.
 400.00.01  constraint-based-planning-engine
 500.00.01  structured-document-compliance-agent
 600.00.01  persistent-character-world-system
+700.00.01  human-adaptive-communication
 800.00.01  extract-audit-kernel
 ```
 
