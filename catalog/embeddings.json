@@ -4,15 +4,48 @@
   "model": "sentence-transformers/all-MiniLM-L6-v2",
   "dim": 384,
   "normalized": true,
-  "N": 7,
+  "N": 8,
   "docs": [
-    {"name": "skillax", "call": "000.10.01", "file": "embeddings/skillax.json"},
-    {"name": "sovereign-control-plane", "call": "100.00.01", "file": "embeddings/sovereign-control-plane.json"},
-    {"name": "cinematic-narrative-engine", "call": "200.00.01", "file": "embeddings/cinematic-narrative-engine.json"},
-    {"name": "consultative-service-operations-os", "call": "300.00.01", "file": "embeddings/consultative-service-operations-os.json"},
-    {"name": "constraint-based-planning-engine", "call": "400.00.01", "file": "embeddings/constraint-based-planning-engine.json"},
-    {"name": "structured-document-compliance-agent", "call": "500.00.01", "file": "embeddings/structured-document-compliance-agent.json"},
-    {"name": "persistent-character-world-system", "call": "600.00.01", "file": "embeddings/persistent-character-world-system.json"}
+    {
+      "name": "skillax",
+      "call": "000.10.01",
+      "file": "embeddings/skillax.json"
+    },
+    {
+      "name": "sovereign-control-plane",
+      "call": "100.00.01",
+      "file": "embeddings/sovereign-control-plane.json"
+    },
+    {
+      "name": "cinematic-narrative-engine",
+      "call": "200.00.01",
+      "file": "embeddings/cinematic-narrative-engine.json"
+    },
+    {
+      "name": "consultative-service-operations-os",
+      "call": "300.00.01",
+      "file": "embeddings/consultative-service-operations-os.json"
+    },
+    {
+      "name": "constraint-based-planning-engine",
+      "call": "400.00.01",
+      "file": "embeddings/constraint-based-planning-engine.json"
+    },
+    {
+      "name": "structured-document-compliance-agent",
+      "call": "500.00.01",
+      "file": "embeddings/structured-document-compliance-agent.json"
+    },
+    {
+      "name": "persistent-character-world-system",
+      "call": "600.00.01",
+      "file": "embeddings/persistent-character-world-system.json"
+    },
+    {
+      "name": "human-adaptive-communication",
+      "call": "700.00.01",
+      "file": "embeddings/human-adaptive-communication.json"
+    }
   ],
-  "note": "Do not re-embed documents at query time. Rebuild and commit this file to change dense ranking."
+  "note": "Per-skill vectors. rank.py loads them on demand. Rebuild via embed_build.py then split or use updated builder."
 }
