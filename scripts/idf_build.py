@@ -9,22 +9,14 @@ import re
 import sys
 from pathlib import Path
 
-RANKER_VERSION = "bm25-frozen-1"
+from live_skills import LIVE, RANKER_VERSION
+
 K1 = 1.2
 B = 0.75
 TOKEN = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 STOP = frozenset(
     "a an and as at be by for from in into is it of on or the to use using with without that this those these your you we they their".split()
 )
-LIVE = {
-    "skillax": "000.10.01",
-    "sovereign-control-plane": "100.00.01",
-    "cinematic-narrative-engine": "200.00.01",
-    "consultative-service-operations-os": "300.00.01",
-    "constraint-based-planning-engine": "400.00.01",
-    "structured-document-compliance-agent": "500.00.01",
-    "persistent-character-world-system": "600.00.01",
-}
 
 
 def tokenize(text: str) -> list[str]:
@@ -42,11 +34,19 @@ def description_of(skill_md: Path) -> str:
     return ""
 
 
-def build(skills_root: Path) -> dict:
+def find_skill_md(name: str, roots: list[Path]) -> Path | None:
+    for root in roots:
+        p = root / name / "SKILL.md"
+        if p.is_file():
+            return p
+    return None
+
+
+def build(skills_roots: list[Path]) -> dict:
     docs = []
     for name, call in LIVE.items():
-        path = skills_root / name / "SKILL.md"
-        desc = description_of(path) if path.exists() else name
+        path = find_skill_md(name, skills_roots)
+        desc = description_of(path) if path else name
         tokens = tokenize(name.replace("-", " ") + " " + desc)
         docs.append({"name": name, "call": call, "tokens": tokens, "len": len(tokens)})
     n = len(docs)
@@ -58,6 +58,7 @@ def build(skills_root: Path) -> dict:
     idf = {tok: math.log(1.0 + (n - c + 0.5) / (c + 0.5)) for tok, c in sorted(df.items())}
     return {
         "ranker_version": RANKER_VERSION,
+        "channel": "bm25",
         "k1": K1,
         "b": B,
         "N": n,
@@ -71,10 +72,10 @@ def build(skills_root: Path) -> dict:
 
 def main() -> None:
     root = Path(__file__).resolve().parents[1]
-    skills = Path(sys.argv[1]) if len(sys.argv) > 1 else root / "skills"
-    if not skills.exists():
-        skills = Path("/home/workdir/.grok/skills")
-    table = build(skills)
+    roots = [root / "skills", Path("/home/workdir/.grok/skills")]
+    if len(sys.argv) > 1:
+        roots.insert(0, Path(sys.argv[1]))
+    table = build(roots)
     out = root / "catalog" / "idf.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(table, indent=2) + "\n", encoding="utf-8")

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run frozen BM25 fixtures. Exit 1 on mismatch."""
+"""Run frozen hybrid rank fixtures. Exit 1 on mismatch."""
 
 from __future__ import annotations
 
@@ -12,13 +12,15 @@ CASES = [
     ("consult booking dual site", "consultative-service-operations-os"),
     ("ssrf agent recovery", "sovereign-control-plane"),
     ("vertical six-second reels", "cinematic-narrative-engine"),
+    ("high stakes legal policy document under constraints", "structured-document-compliance-agent"),
+    ("plan meals with allergens and quotas", "constraint-based-planning-engine"),
     ("card", "none"),
 ]
 
 
-def load_line(query: str) -> str:
+def load_line(query: str, mode: str = "hybrid") -> str:
     out = subprocess.check_output(
-        [sys.executable, str(ROOT / "scripts" / "rank.py"), query],
+        [sys.executable, str(ROOT / "scripts" / "rank.py"), query, "--mode", mode],
         text=True,
     )
     for line in out.splitlines():
@@ -30,7 +32,7 @@ def load_line(query: str) -> str:
 def main() -> None:
     failed = 0
     for query, expect in CASES:
-        got = load_line(query)
+        got = load_line(query, "hybrid")
         ok = got == expect or (expect == "none" and got.startswith("none"))
         mark = "OK" if ok else "FAIL"
         print(f"{mark}\t{query!r}\texpect={expect}\tgot={got}")
