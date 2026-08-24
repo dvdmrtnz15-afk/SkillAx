@@ -16,7 +16,7 @@ LIVE: dict[str, str] = {
     "constraint-based-planning-engine": "400.00.01",
     "structured-document-compliance-agent": "500.00.01",
     "persistent-character-world-system": "600.00.01",
-    # human-adaptive-communication waits on SA6 class decision (no 700 product)
+    "human-adaptive-communication": "700.00.01",
 }
 
 EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
