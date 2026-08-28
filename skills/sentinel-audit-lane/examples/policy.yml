@@ -1,0 +1,17 @@
+profile_id: skillax-self
+owner: dvdmrtnz15-afk
+purpose: review-only scan of the SkillAx tree
+engine_pin: local-tree
+exclude_paths:
+  - .git
+  - .sentinel/engine
+  - .sentinel/receipts
+  - catalog/embeddings.json
+allowed_write_globs:
+  - .github/workflows/sentinel-caller.yml
+  - .sentinel/policy.yml
+  - .sentinel/receipts/
+nonclaims:
+  - not authorization
+  - not product state
+  - not canon promotion
