@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "semantic-ir-compressor": {
+      "command": "python3",
+      "args": [
+        "skills/semantic-ir-compressor/scripts/mcp_server.py"
+      ],
+      "cwd": "${SKILLAX_ROOT}"
+    }
+  }
+}
