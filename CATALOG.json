@@ -46,6 +46,11 @@
       "name": "human-adaptive-communication",
       "path": "skills/human-adaptive-communication/SKILL.md",
       "job": "Workplace messages adapted to relationship, power, stakes, and outcome"
+    },
+    {
+      "name": "sentinel-audit-lane",
+      "path": "skills/sentinel-audit-lane/SKILL.md",
+      "job": "Read-only ContextReceipt audits for GitHub and macOS"
     }
   ],
   "merged": [
