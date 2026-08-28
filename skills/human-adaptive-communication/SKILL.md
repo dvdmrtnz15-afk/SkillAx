@@ -23,6 +23,13 @@ Do not load this skill for contracts, policies, filings, or regulated document p
 
 Effective communication = contextual fit x authentic voice x recipient clarity x outcome alignment. If any factor approaches zero, the message fails.
 
+## Operating Principles
+
+- Diagnose before wording.
+- Preserve sender voice inside the appropriateness envelope.
+- One primary outcome. Do not stack jobs.
+- Observed facts stay separate from inference.
+
 ## Axioms
 
 1. Communication is relational. The same sentence changes meaning across proximity and perceived hierarchy. Calibrate to the power the recipient is likely to feel, not only the authority the sender intends.
