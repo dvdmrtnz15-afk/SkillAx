@@ -12,6 +12,20 @@ metadata:
 
 Turn a source into one fragment another plane can run. Not a summary. Not a transcript.
 
+## Core Mandate
+
+1. Compress one source into one fragment another plane can execute.
+2. Never amplify the source claim.
+3. Keep residual first-class.
+4. Refuse incomplete or out-of-lease work from the working set.
+
+## Operating Principles
+
+- Hard constraints beat similarity.
+- Notion is recovery. Linear is a later human commit.
+- Real URLs only. No scrape. No inferred Done.
+- Circadian receipts with no world delta are not fragments.
+
 ## Axioms
 
 1. One source, one fragment. Split if two jobs exist.
