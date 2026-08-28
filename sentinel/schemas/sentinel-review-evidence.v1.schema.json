@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://truenorthapplications.com/schemas/sentinel-review-evidence.v1.schema.json",
+  "title": "TrueNorth Federation Sentinel Review Evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "generated_at", "authority", "effect_authorized", "promotion_authorized", "completion_status", "review_status", "subject", "engine", "summary", "findings", "nonclaims", "diagnostics", "evidence_digest"],
+  "properties": {
+    "schema": {"const": "truenorth.sentinel.review-evidence.v1"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "authority": {"const": "none"},
+    "effect_authorized": {"const": false},
+    "promotion_authorized": {"const": false},
+    "completion_status": {"enum": ["complete", "incomplete"]},
+    "review_status": {"enum": ["NO_FINDINGS", "REVIEW_REQUIRED", "INCOMPLETE"]},
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "base", "head", "event", "pull_request_number", "pull_request_body_digest", "profile", "inspected_paths", "deleted_paths", "scope_mode", "source_mode", "path_encoding", "snapshot_stable", "candidate_digest"],
+      "properties": {
+        "repository": {"type": "string", "minLength": 1},
+        "base": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"},
+        "head": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "event": {"type": "string", "minLength": 1},
+        "pull_request_number": {"type": ["integer", "null"]},
+        "pull_request_body_digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "profile": {"type": "string", "pattern": "^[A-Za-z0-9._:-]{1,96}$"},
+        "inspected_paths": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "deleted_paths": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "scope_mode": {"enum": ["merge-base-diff", "full-git-tree", "full-working-tree", "working-tree-changes"]},
+        "source_mode": {"enum": ["git-object", "working-tree"]},
+        "path_encoding": {"const": "percent-encoded-bytes-v1"},
+        "snapshot_stable": {"type": "boolean"},
+        "candidate_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "source_digest", "policy_digest"],
+      "properties": {
+        "name": {"const": "truenorth-federation-sentinel"},
+        "version": {"type": "string", "minLength": 1},
+        "source_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "policy_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finding_count", "by_severity"],
+      "properties": {
+        "finding_count": {"type": "integer", "minimum": 0},
+        "by_severity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["low", "medium", "high", "critical"],
+          "properties": {
+            "low": {"type": "integer", "minimum": 0},
+            "medium": {"type": "integer", "minimum": 0},
+            "high": {"type": "integer", "minimum": 0},
+            "critical": {"type": "integer", "minimum": 0}
+          }
+        }
+      }
+    },
+    "findings": {"type": "array", "items": {"$ref": "#/$defs/finding"}},
+    "nonclaims": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_source", "working_tree_dirty", "working_tree_status_digest", "working_tree_end_status_digest", "checkout_head_at_end", "snapshot_stable"],
+      "properties": {
+        "policy_source": {"type": "string", "minLength": 1},
+        "working_tree_dirty": {"type": "boolean"},
+        "working_tree_status_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "working_tree_end_status_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "checkout_head_at_end": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "snapshot_stable": {"type": "boolean"}
+      }
+    },
+    "evidence_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "severity", "message"],
+      "properties": {
+        "code": {"type": "string", "pattern": "^SNT[0-9]{3}$"},
+        "severity": {"enum": ["low", "medium", "high", "critical"]},
+        "message": {"type": "string", "minLength": 1},
+        "path": {"type": "string"},
+        "line": {"type": "integer", "minimum": 1}
+      }
+    }
+  }
+}

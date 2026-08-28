@@ -1,0 +1,12 @@
+{
+  "schema": "truenorth.federation-sentinel.local-repos.v1",
+  "repositories": [
+    {
+      "expected_remote": "https://github.com/TrueNorthAppsCEO/BuildRoom-OS.git",
+      "id": "buildroom-os",
+      "path": "/Users/yourname/TrueNorth/BuildRoom-OS",
+      "policy_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "scope": "full"
+    }
+  ]
+}
