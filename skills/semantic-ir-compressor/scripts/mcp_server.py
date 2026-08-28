@@ -14,6 +14,8 @@ from gate import gate  # noqa: E402
 
 SKILL_URL = "https://github.com/dvdmrtnz15-afk/SkillAx/tree/main/skills/semantic-ir-compressor"
 SKILL_RAW = "https://raw.githubusercontent.com/dvdmrtnz15-afk/SkillAx/main/skills/semantic-ir-compressor/SKILL.md"
+CAPSULE_PATH = HERE.parent / "references" / "context-capsule.v1.json"
+CAPSULE_URI = "semanticir://context-capsule/v1"
 
 TOOLS = [
     {
@@ -51,6 +53,15 @@ TOOLS = [
     },
 ]
 
+RESOURCES = [
+    {
+        "uri": CAPSULE_URI,
+        "name": "Federation context capsule v1",
+        "mimeType": "application/json",
+        "description": "Read-only ownership and input contract. Not live enterprise context.",
+    }
+]
+
 
 def _ok(rid: Any, result: Any) -> dict[str, Any]:
     return {"jsonrpc": "2.0", "id": rid, "result": result}
@@ -63,6 +74,10 @@ def _err(rid: Any, code: int, message: str) -> dict[str, Any]:
 def _text(payload: Any) -> dict[str, Any]:
     body = payload if isinstance(payload, str) else json.dumps(payload, indent=2)
     return {"content": [{"type": "text", "text": body}]}
+
+
+def _capsule() -> str:
+    return CAPSULE_PATH.read_text(encoding="utf-8")
 
 
 def format_export(frag: dict[str, Any]) -> str:
@@ -93,14 +108,24 @@ def handle(req: dict[str, Any]) -> dict[str, Any] | None:
             rid,
             {
                 "protocolVersion": "2024-11-05",
-                "capabilities": {"tools": {}},
-                "serverInfo": {"name": "semantic-ir-compressor", "version": "1.0.0"},
+                "capabilities": {"tools": {}, "resources": {}},
+                "serverInfo": {"name": "semantic-ir-compressor", "version": "1.1.0"},
             },
         )
     if method == "notifications/initialized":
         return None
     if method == "tools/list":
         return _ok(rid, {"tools": TOOLS})
+    if method == "resources/list":
+        return _ok(rid, {"resources": RESOURCES})
+    if method == "resources/read":
+        uri = params.get("uri")
+        if uri != CAPSULE_URI:
+            return _err(rid, -32602, f"unknown resource {uri}")
+        return _ok(
+            rid,
+            {"contents": [{"uri": CAPSULE_URI, "mimeType": "application/json", "text": _capsule()}]},
+        )
     if method == "tools/call":
         name = params.get("name")
         args = params.get("arguments") or {}
@@ -113,6 +138,8 @@ def handle(req: dict[str, Any]) -> dict[str, Any] | None:
                         "github": SKILL_URL,
                         "raw": SKILL_RAW,
                         "gate": "skills/semantic-ir-compressor/scripts/gate.py",
+                        "capsule": CAPSULE_URI,
+                        "live_context": "LYZT-AI",
                         "writes": "none",
                     }
                 ),
