@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://truenorthapplications.com/schemas/local-run.v1.schema.json",
+  "title": "TrueNorth Federation Sentinel Local Run Status v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "authority",
+    "effect_authorized",
+    "promotion_authorized",
+    "repo_id",
+    "run_id",
+    "bundle_id",
+    "state",
+    "reason",
+    "exit_code",
+    "started_at",
+    "finished_at"
+  ],
+  "properties": {
+    "schema": {"const": "truenorth.federation-sentinel.local-run.v1"},
+    "authority": {"const": "none"},
+    "effect_authorized": {"const": false},
+    "promotion_authorized": {"const": false},
+    "repo_id": {"type": "string", "pattern": "^(?:_fleet|[A-Za-z0-9][A-Za-z0-9._-]{0,95})$"},
+    "run_id": {"type": "string", "pattern": "^[0-9]{8}T[0-9]{6}\\.[0-9]{6}Z-[0-9a-f]{8}$"},
+    "bundle_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "state": {"type": "string", "enum": ["complete", "blocked", "failed"]},
+    "reason": {"type": ["string", "null"]},
+    "exit_code": {"type": ["integer", "null"]},
+    "started_at": {"type": "string", "format": "date-time"},
+    "finished_at": {"type": "string", "format": "date-time"},
+    "head": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "candidate_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "evidence_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "report_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "untrusted_evidence_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "review_status": {"type": "string", "enum": ["NO_FINDINGS", "REVIEW_REQUIRED"]}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"state": {"const": "complete"}}, "required": ["state"]},
+      "then": {
+        "required": ["head", "candidate_digest", "evidence_sha256", "report_sha256", "review_status"],
+        "properties": {"reason": {"type": "null"}, "exit_code": {"const": 0}}
+      }
+    }
+  ]
+}

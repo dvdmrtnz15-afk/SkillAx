@@ -1,0 +1,74 @@
+name: TrueNorth Federation Sentinel
+description: Deterministic, read-only architecture and code-risk audit with non-authorizing review evidence.
+author: True North Applications LLC
+
+inputs:
+  config:
+    description: Repository-relative Sentinel policy path.
+    required: false
+    default: .truenorth/sentinel.json
+  enforcement:
+    description: Compatibility input; Sentinel v1 accepts only audit and never authorizes or vetoes promotion.
+    required: false
+    default: audit
+  evidence-path:
+    description: Optional output JSON path; defaults beneath RUNNER_TEMP.
+    required: false
+    default: ""
+  report-path:
+    description: Optional output Markdown path; defaults beneath RUNNER_TEMP.
+    required: false
+    default: ""
+
+outputs:
+  evidence-path:
+    description: Path to the generated non-authorizing review evidence.
+    value: ${{ steps.audit.outputs.evidence_path }}
+  report-path:
+    description: Path to the generated Markdown report.
+    value: ${{ steps.audit.outputs.report_path }}
+  review-status:
+    description: NO_FINDINGS, REVIEW_REQUIRED, or INCOMPLETE; never an authorization.
+    value: ${{ steps.audit.outputs.review_status }}
+
+runs:
+  using: composite
+  steps:
+    - id: audit
+      name: Run deterministic Sentinel audit
+      shell: bash
+      env:
+        SENTINEL_CONFIG: ${{ inputs.config }}
+        SENTINEL_ENFORCEMENT: ${{ inputs.enforcement }}
+        SENTINEL_EVIDENCE: ${{ inputs.evidence-path }}
+        SENTINEL_REPORT: ${{ inputs.report-path }}
+      run: |
+        set -euo pipefail
+        output_root="${RUNNER_TEMP:?}/truenorth-federation-sentinel/${GITHUB_RUN_ID:-run}-${GITHUB_RUN_ATTEMPT:-0}"
+        evidence="${SENTINEL_EVIDENCE:-$output_root/sentinel-review-evidence.json}"
+        report="${SENTINEL_REPORT:-$output_root/sentinel-report.md}"
+        if [[ "$evidence" == *$'\n'* || "$evidence" == *$'\r'* || "$report" == *$'\n'* || "$report" == *$'\r'* ]]; then
+          echo "Sentinel output paths must be single-line values" >&2
+          exit 3
+        fi
+        set +e
+        python3 -I -X utf8 "$GITHUB_ACTION_PATH/sentinel.py" audit --repo "$GITHUB_WORKSPACE" --config "$SENTINEL_CONFIG" --require-config --enforcement "$SENTINEL_ENFORCEMENT" --evidence "$evidence" --report "$report"
+        exit_code=$?
+        set -e
+        review_status="INCOMPLETE"
+        if [[ "$exit_code" -eq 0 && -f "$evidence" ]]; then
+          review_status="$(python3 -I -X utf8 -c 'import json,sys; value=json.load(open(sys.argv[1], encoding="utf-8")); assert value["authority"] == "none" and value["effect_authorized"] is False and value["promotion_authorized"] is False and value["completion_status"] == "complete" and value["review_status"] in {"NO_FINDINGS", "REVIEW_REQUIRED"}; print(value["review_status"])' "$evidence")"
+        fi
+        {
+          echo "evidence_path=$evidence"
+          echo "report_path=$report"
+          echo "review_status=$review_status"
+        } >> "$GITHUB_OUTPUT"
+        if [[ -n "${GITHUB_STEP_SUMMARY:-}" && -f "$report" ]]; then
+          cat "$report" >> "$GITHUB_STEP_SUMMARY"
+        fi
+        exit "$exit_code"
+
+branding:
+  icon: shield
+  color: blue

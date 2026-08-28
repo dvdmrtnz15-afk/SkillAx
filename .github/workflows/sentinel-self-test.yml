@@ -1,0 +1,74 @@
+name: Federation Sentinel self-test
+
+on:
+  pull_request:
+    paths:
+      - "sentinel/**"
+      - ".truenorth/sentinel.json"
+      - "scripts/install-macos-launchagent.sh"
+      - "tests/**"
+      - ".github/workflows/sentinel-self-test.yml"
+  push:
+    branches: [main]
+    paths:
+      - "sentinel/**"
+      - ".truenorth/sentinel.json"
+      - "scripts/install-macos-launchagent.sh"
+      - "tests/**"
+      - ".github/workflows/sentinel-self-test.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+          cache: ""
+      - id: sentinel
+        name: Audit the exact candidate head
+        uses: ./sentinel
+        with:
+          config: .truenorth/sentinel.json
+          enforcement: audit
+      - name: Assert the Action remains non-authorizing
+        env:
+          SENTINEL_EVIDENCE_PATH: ${{ steps.sentinel.outputs.evidence-path }}
+        run: >-
+          python3 -c 'import json,os; value=json.load(open(os.environ["SENTINEL_EVIDENCE_PATH"], encoding="utf-8"));
+          assert value["authority"] == "none";
+          assert value["effect_authorized"] is False;
+          assert value["promotion_authorized"] is False;
+          assert value["completion_status"] == "complete"'
+      - name: Compile
+        run: python3 -m py_compile sentinel/sentinel.py sentinel/macos_runner.py
+      - name: Compile installer Python payload
+        run: >-
+          python3 -c 'from pathlib import Path; p=Path("scripts/install-macos-launchagent.sh");
+          s=p.read_text(encoding="utf-8"); marker="<<'"'"'PY'"'"'\n";
+          compile(s[s.index(marker)+len(marker):s.rindex("\nPY\n")], str(p)+":embedded-python", "exec")'
+      - name: Unit tests
+        run: python3 -I -X utf8 -m unittest discover -s tests -p "test_*.py" -v
+      - name: Shell syntax
+        run: bash -n scripts/install-macos-launchagent.sh
+      - name: Parse JSON contracts
+        run: python3 -c 'import json,pathlib; [json.loads(p.read_text()) for p in pathlib.Path("sentinel").rglob("*.json")]'
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always() && steps.sentinel.outputs.evidence-path != ''
+        with:
+          name: federation-sentinel-self-review-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ steps.sentinel.outputs.evidence-path }}
+            ${{ steps.sentinel.outputs.report-path }}
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://truenorthapplications.com/schemas/sentinel-policy.v1.schema.json",
+  "title": "TrueNorth Federation Sentinel Policy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "profile"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "schema": {"const": "truenorth.sentinel.policy.v1"},
+    "profile": {"type": "string", "pattern": "^[A-Za-z0-9._:-]{1,96}$"},
+    "enforcement": {"const": "audit", "default": "audit", "description": "Sentinel v1 is advisory and audit-only."},
+    "fail_on": {
+      "type": "array",
+      "items": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+      "uniqueItems": true,
+      "deprecated": true,
+      "description": "Accepted for legacy policy compatibility but ignored by the v1 audit-only engine."
+    },
+    "max_file_bytes": {"type": "integer", "minimum": 1024, "maximum": 104857600, "default": 5242880},
+    "sensitive_globs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "required_evidence": {"type": "array", "items": {"type": "string", "minLength": 2}, "uniqueItems": true}
+  }
+}

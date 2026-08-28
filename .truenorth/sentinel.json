@@ -1,0 +1,23 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dvdmrtnz15-afk/SkillAx/main/sentinel/schemas/sentinel-policy.v1.schema.json",
+  "schema": "truenorth.sentinel.policy.v1",
+  "profile": "skillax.federation-sentinel-portable-tool.v1",
+  "enforcement": "audit",
+  "fail_on": ["critical"],
+  "max_file_bytes": 5242880,
+  "sensitive_globs": [
+    ".github/workflows/sentinel-self-test.yml",
+    ".truenorth/sentinel.json",
+    "docs/SENTINEL.md",
+    "scripts/install-macos-launchagent.sh",
+    "sentinel/**",
+    "tests/test_sentinel.py"
+  ],
+  "required_evidence": [
+    "Portable boundary",
+    "No authority",
+    "Exact-head inspection",
+    "Negative tests",
+    "Rollback"
+  ]
+}
