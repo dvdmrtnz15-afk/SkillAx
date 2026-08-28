@@ -16,13 +16,18 @@ def main() -> None:
         [
             {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}},
             {"jsonrpc": "2.0", "id": 2, "method": "tools/list"},
-            {"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "skill_pointer", "arguments": {}}},
+            {"jsonrpc": "2.0", "id": 3, "method": "resources/list"},
+            {"jsonrpc": "2.0", "id": 4, "method": "resources/read", "params": {"uri": "semanticir://context-capsule/v1"}},
         ]
     )
     assert replies[0]["result"]["serverInfo"]["name"] == "semantic-ir-compressor"
     names = {t["name"] for t in replies[1]["result"]["tools"]}
     assert names == {"gate_fragment", "format_export", "skill_pointer"}
-    assert "SkillAx" in replies[2]["result"]["content"][0]["text"]
+    uris = {r["uri"] for r in replies[2]["result"]["resources"]}
+    assert "semanticir://context-capsule/v1" in uris
+    text = replies[3]["result"]["contents"][0]["text"]
+    assert "SkillAx does not own live enterprise context" in text
+    assert "LYZT-AI" in text
     print("ok")
 
 
