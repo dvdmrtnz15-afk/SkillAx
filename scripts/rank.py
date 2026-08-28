@@ -3,7 +3,7 @@
 
 Lexical lock: if BM25 has a clear winner (score>=1.0 and margin>=0.5), trust it.
 Otherwise RRF-fuse BM25 ranks with dense ranks.
-Falls back to BM25-only if catalog/embeddings.json is missing.
+Falls back to BM25-only if catalog/embeddings.json is missing or has no vectors.
 """
 
 from __future__ import annotations
@@ -107,11 +107,13 @@ def main() -> None:
     if emb_path.exists():
         emb = json.loads(emb_path.read_text(encoding="utf-8"))
 
-    if args.mode in ("dense", "hybrid") and emb is None:
+    has_vectors = bool(emb) and any("vector" in d for d in emb.get("docs", []))
+    if args.mode in ("dense", "hybrid") and not has_vectors:
         if args.mode == "dense":
-            print("ERR embeddings.json missing", file=sys.stderr)
+            print("ERR embeddings.json missing vectors", file=sys.stderr)
             raise SystemExit(2)
         args.mode = "bm25"
+        emb = None
 
     q_tokens = tokenize(args.query)
     pipeline = any(p in args.query.lower() for p in PIPELINE)

@@ -4,7 +4,7 @@ description: Compress a thread, export, or receipt into one SemanticIR fragment 
 license: MIT
 metadata:
   type: workflow
-  version: "1.0"
+  version: "1.2"
   portfolio: TrueNorth
 ---
 
@@ -26,6 +26,18 @@ Turn a source into one fragment another plane can run. Not a summary. Not a tran
 - Real URLs only. No scrape. No inferred Done.
 - Circadian receipts with no world delta are not fragments.
 
+## Organism fit
+
+This skill is Skill X on the Cognition Plane. It is the experience and intent frontend of the one IR.
+
+- Signal: Gmail `AI export` or Drive `AI-Exports` is the Event.
+- Governance: `gate_fragment` is a reflex. Admit or reject.
+- Execution: local stdio MCP is dumb muscle. Writes none.
+- State: an admitted Notion row is recovery memory, not Job Active.
+- Atlas: organism spec chapter 15. Explorer is not runtime.
+
+Kernel freeze stays `Intent → Job → Process → Capability → Action → Receipt → State`.
+
 ## Axioms
 
 1. One source, one fragment. Split if two jobs exist.
@@ -34,18 +46,29 @@ Turn a source into one fragment another plane can run. Not a summary. Not a tran
 4. No next action means incomplete. Incomplete rows do not enter the working set unless Impact is 8 or higher.
 5. Hard constraints beat similarity. Decorative Why It Matters is rejection, not a soft miss.
 
+## Communications layer (local MCP)
+
+This skill is pointed at by a local stdio MCP. Clients (Claude, Codex, VS Code) attach `mcp.json`. FounderLab Agent Hub stays the vault/handoff gateway. This MCP only admits fragments.
+
+- Server: `scripts/mcp_server.py`
+- Tools: `gate_fragment`, `format_export`, `skill_pointer`
+- Writes: none
+- Pointer: https://github.com/dvdmrtnz15-afk/SkillAx/tree/main/skills/semantic-ir-compressor
+
+See `references/local-mcp.md`.
+
 ## Fragment
 
 Required fields
 
-- title — short task name
+- title — Job name at Idea or Candidate
 - idea — 2 to 4 sentences, source-strength only
-- next_action — one concrete verb
-- why_it_matters — one real stake (income, asset, risk, decision)
-- residual — short clause or empty string if cleanly complete
+- next_action — one concrete verb, next valid step
+- why_it_matters — one real stake on the Intent Graph
+- residual — unresolved evidence, or empty if cleanly complete
 - source_type — grok | claude | chatgpt | gemini | perplexity | linear | github | gmail | drive | slack-export | teams | calendar
 - source_url — real URL only. Omit rather than invent.
-- plane — the model that compressed this
+- plane — the disposable Process that compressed this
 
 Optional ranking fields (do not invent precision)
 
@@ -64,7 +87,7 @@ Priority = Impact + Recency when both exist.
 5. Write why_it_matters with a stake. If none exists, mark incomplete. Do not decorate.
 6. Write residual. Prefer one dimension. Empty only when nothing is unresolved.
 7. Attach source_type and a real source_url when you have one.
-8. Run the gate in `scripts/gate.py` on the JSON fragment before a ledger write.
+8. Run the gate in `scripts/gate.py` or MCP tool `gate_fragment` before a ledger write.
 9. Admit only if the gate returns `ok`. Otherwise return the rejection and stop.
 
 Do not write Linear from a fragment. Notion is recovery. Linear is a later human commit.
@@ -94,10 +117,10 @@ Do not promote to Linear unless David says commit.
 - Do not compress Circadian receipts that have no world delta. Reject as no-evidence pass.
 - Do not put family or legal work into a cortex fragment. Mark out_of_lease.
 - Do not scrape other-model UIs. Ingest only an export packet, Drive file, or Gmail subject containing AI export.
+- Do not treat organism explorer as runtime.
 
 ## Load next
 
-Scoring and temperature live in thread-recovery-ranker `references/scoring.md`.
-Export header live in thread-recovery-ranker `references/export-contract.md`.
-Worked examples in `references/worked-examples.md`.
+Organism binding: `src/lib/organism/semantic-ir.ts` (atlas chapter 15).
+Local MCP in `references/local-mcp.md`.
 Gate in `scripts/gate.py`.

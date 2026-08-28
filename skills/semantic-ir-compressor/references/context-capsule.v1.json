@@ -1,0 +1,36 @@
+{
+  "schema": "truenorth.federation-context-capsule.v1",
+  "version": "1.0.0",
+  "law": [
+    "observe != authorize != act",
+    "more context != more authority",
+    "SkillAx does not own live enterprise context"
+  ],
+  "ownership": {
+    "portable_discovery": "SkillAx/semantic-ir-compressor",
+    "live_context": "LYZT-AI / Live Context",
+    "atlas": "organism (not runtime)",
+    "vault_handoff": "FounderLab founderlab_mcp",
+    "linear_effect": "LYZT-AI governed Linear path",
+    "local_runtime": "ai-tools"
+  },
+  "input_contract": {
+    "ingest": ["Gmail subject: AI export", "Drive folder: AI-Exports"],
+    "required_fields": ["source", "as_of", "authority_epoch", "citation"],
+    "freshness": "cite as_of; do not infer current from silence",
+    "conflict": "name residual; do not merge two planes into one claim"
+  },
+  "resources": {
+    "capsule": "semanticir://context-capsule/v1",
+    "skill": "https://github.com/dvdmrtnz15-afk/SkillAx/tree/main/skills/semantic-ir-compressor",
+    "atlas": "https://github.com/dvdmrtnz15-afk/organism/blob/fit/semantic-ir-binding/src/lib/organism/semantic-ir.ts",
+    "lyzt": "https://github.com/dvdmrtnz15-afk/LYZT-AI"
+  },
+  "refuse": [
+    "live Notion/Linear/GitHub scrape from this MCP",
+    "write Linear, Slack, vault, Gmail, Drive",
+    "treat organism explorer as runtime",
+    "put receiver on BuildRoom-OS",
+    "widen gate because more context arrived"
+  ]
+}
