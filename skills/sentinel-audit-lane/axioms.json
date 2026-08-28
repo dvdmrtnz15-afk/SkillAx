@@ -1,0 +1,21 @@
+{
+  "skill": "sentinel-audit-lane",
+  "axioms": [
+    {
+      "type": "job",
+      "text": "Emit a read-only ContextReceipt for a checkout. Never authorize an effect."
+    },
+    {
+      "type": "refuse",
+      "text": "Refuse portfolio-wide patches, merges, and any claim that a packet or receipt grants effect authority."
+    },
+    {
+      "type": "bind",
+      "text": "Engine lives in SkillAx and is consumed only at an immutable commit SHA."
+    },
+    {
+      "type": "safety",
+      "text": "Fail closed when a caller is unpinned, a workflow writes production state, or capsules are conflated into authorization."
+    }
+  ]
+}
