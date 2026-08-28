@@ -4,7 +4,7 @@ description: Compress a thread, export, or receipt into one SemanticIR fragment 
 license: MIT
 metadata:
   type: workflow
-  version: "1.0"
+  version: "1.1"
   portfolio: TrueNorth
 ---
 
@@ -33,6 +33,17 @@ Turn a source into one fragment another plane can run. Not a summary. Not a tran
 3. Residual is first-class. Unresolved meaning, intent, authority, evidence, or time stays named.
 4. No next action means incomplete. Incomplete rows do not enter the working set unless Impact is 8 or higher.
 5. Hard constraints beat similarity. Decorative Why It Matters is rejection, not a soft miss.
+
+## Communications layer (local MCP)
+
+This skill is pointed at by a local stdio MCP. Clients (Claude, Codex, VS Code) attach `mcp.json`. FounderLab Agent Hub stays the vault/handoff gateway. This MCP only admits fragments.
+
+- Server: `scripts/mcp_server.py`
+- Tools: `gate_fragment`, `format_export`, `skill_pointer`
+- Writes: none
+- Pointer: https://github.com/dvdmrtnz15-afk/SkillAx/tree/main/skills/semantic-ir-compressor
+
+See `references/local-mcp.md`.
 
 ## Fragment
 
@@ -64,7 +75,7 @@ Priority = Impact + Recency when both exist.
 5. Write why_it_matters with a stake. If none exists, mark incomplete. Do not decorate.
 6. Write residual. Prefer one dimension. Empty only when nothing is unresolved.
 7. Attach source_type and a real source_url when you have one.
-8. Run the gate in `scripts/gate.py` on the JSON fragment before a ledger write.
+8. Run the gate in `scripts/gate.py` or MCP tool `gate_fragment` before a ledger write.
 9. Admit only if the gate returns `ok`. Otherwise return the rejection and stop.
 
 Do not write Linear from a fragment. Notion is recovery. Linear is a later human commit.
@@ -100,4 +111,5 @@ Do not promote to Linear unless David says commit.
 Scoring and temperature live in thread-recovery-ranker `references/scoring.md`.
 Export header live in thread-recovery-ranker `references/export-contract.md`.
 Worked examples in `references/worked-examples.md`.
+Local MCP in `references/local-mcp.md`.
 Gate in `scripts/gate.py`.
