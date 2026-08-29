@@ -14,3 +14,4 @@ jobs:
       - run: python3 scripts/rank_test.py
       - run: python3 scripts/measure.py packs/skillax --expect PASS
       - run: python3 skills/sentinel-audit-lane/scripts/test_scan.py
+      - run: python3 skills/exact-head-evidence-integrity/scripts/test_evaluate.py
