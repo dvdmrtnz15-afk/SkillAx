@@ -7,9 +7,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert literal revision
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - run: python3 skills/semantic-ir-compressor/scripts/test_gate.py
+      - run: python3 skills/semantic-ir-compressor/scripts/test_mcp_server.py
       - run: python3 scripts/validate.py --all
       - run: python3 scripts/rank_test.py
       - run: python3 scripts/measure.py packs/skillax --expect PASS

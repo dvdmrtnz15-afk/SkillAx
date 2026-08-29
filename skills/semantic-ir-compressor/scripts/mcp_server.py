@@ -39,7 +39,7 @@ TOOLS = [
     },
     {
         "name": "format_export",
-        "description": "Render an admitted fragment as an AI export packet for Gmail subject AI export or Drive AI-Exports.",
+        "description": "Gate a fragment and render an AI export packet only when the result is ADMITTED.",
         "inputSchema": {
             "type": "object",
             "properties": {"fragment": {"type": "object"}},
@@ -80,7 +80,7 @@ def _capsule() -> str:
     return CAPSULE_PATH.read_text(encoding="utf-8")
 
 
-def format_export(frag: dict[str, Any]) -> str:
+def _render_export_packet(frag: dict[str, Any]) -> str:
     url = (frag.get("source_url") or "").strip()
     residual = frag.get("residual", "")
     lines = [
@@ -99,6 +99,18 @@ def format_export(frag: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def format_export(frag: dict[str, Any]) -> dict[str, Any]:
+    """Return a discriminated result and never package rejected content."""
+    verdict = gate(frag)
+    if not verdict["ok"]:
+        return {"status": "REJECTED", "gate": verdict}
+    return {
+        "status": "ADMITTED",
+        "gate": verdict,
+        "packet": _render_export_packet(frag),
+    }
+
+
 def handle(req: dict[str, Any]) -> dict[str, Any] | None:
     method = req.get("method")
     rid = req.get("id")
@@ -109,7 +121,7 @@ def handle(req: dict[str, Any]) -> dict[str, Any] | None:
             {
                 "protocolVersion": "2024-11-05",
                 "capabilities": {"tools": {}, "resources": {}},
-                "serverInfo": {"name": "semantic-ir-compressor", "version": "1.1.0"},
+                "serverInfo": {"name": "semantic-ir-compressor", "version": "1.2.0"},
             },
         )
     if method == "notifications/initialized":
@@ -148,9 +160,7 @@ def handle(req: dict[str, Any]) -> dict[str, Any] | None:
             return _ok(rid, _text(gate(args)))
         if name == "format_export":
             frag = args.get("fragment") or args
-            verdict = gate(frag)
-            packet = format_export(frag)
-            return _ok(rid, _text({"gate": verdict, "packet": packet}))
+            return _ok(rid, _text(format_export(frag)))
         return _err(rid, -32601, f"unknown tool {name}")
     if method == "ping":
         return _ok(rid, {})

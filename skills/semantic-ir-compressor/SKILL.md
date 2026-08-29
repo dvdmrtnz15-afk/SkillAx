@@ -4,7 +4,7 @@ description: Compress a thread, export, or receipt into one SemanticIR fragment 
 license: MIT
 metadata:
   type: workflow
-  version: "1.2"
+  version: "1.3"
   portfolio: TrueNorth
 ---
 
@@ -53,6 +53,7 @@ This skill is pointed at by a local stdio MCP. Clients (Claude, Codex, VS Code) 
 - Server: `scripts/mcp_server.py`
 - Tools: `gate_fragment`, `format_export`, `skill_pointer`
 - Writes: none
+- Export contract: consume `packet` only when `format_export.status` is `ADMITTED`; rejected results never contain a packet.
 - Pointer: https://github.com/dvdmrtnz15-afk/SkillAx/tree/main/skills/semantic-ir-compressor
 
 See `references/local-mcp.md`.
@@ -88,7 +89,7 @@ Priority = Impact + Recency when both exist.
 6. Write residual. Prefer one dimension. Empty only when nothing is unresolved.
 7. Attach source_type and a real source_url when you have one.
 8. Run the gate in `scripts/gate.py` or MCP tool `gate_fragment` before a ledger write.
-9. Admit only if the gate returns `ok`. Otherwise return the rejection and stop.
+9. Admit only if the gate returns `ok`. `format_export` must return `status: ADMITTED` before a caller consumes `packet`; `status: REJECTED` has no packet. Otherwise return the rejection and stop.
 
 Do not write Linear from a fragment. Notion is recovery. Linear is a later human commit.
 

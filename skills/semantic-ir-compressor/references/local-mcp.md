@@ -8,6 +8,7 @@ The communications layer for SemanticIR is a stdio MCP. It points at this skill.
 - Server: `skills/semantic-ir-compressor/scripts/mcp_server.py`
 - Tools: `gate_fragment`, `format_export`, `skill_pointer`
 - Writes: none. Gmail subject `AI export` or Drive `AI-Exports` remains the ingest path.
+- `format_export` is fail-closed: `ADMITTED` includes a packet; `REJECTED` includes the gate verdict and omits the packet entirely.
 
 ## Claude / Codex / VS Code
 
