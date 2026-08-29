@@ -68,13 +68,6 @@ def _s(value: Any) -> str:
     return str(value or "").strip()
 
 
-def _why_decorative(why: str) -> bool:
-    w = why.lower()
-    if w in DECORATIVE_WHY:
-        return True
-    return any(token == w or token in w.split() and w in DECORATIVE_WHY for token in DECORATIVE_WHY)
-
-
 def gate(frag: dict[str, Any]) -> dict[str, Any]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -129,15 +122,8 @@ def gate(frag: dict[str, Any]) -> dict[str, Any]:
         if impact is not None:
             errors.append("impact not an int")
 
-    fatal = {e for e in errors if e != "missing next_action"}
     admit = not errors
-    if (
-        not admit
-        and errors == ["missing next_action"]
-        and impact_n is not None
-        and impact_n >= 8
-        and not fatal
-    ):
+    if errors == ["missing next_action"] and impact_n is not None and impact_n >= 8:
         admit = True
         warnings.append("incomplete but high-impact exception")
 
