@@ -10,6 +10,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - run: python3 skills/semantic-ir-compressor/scripts/test_gate.py
+      - run: python3 skills/semantic-ir-compressor/scripts/test_mcp_server.py
       - run: python3 scripts/validate.py --all
       - run: python3 scripts/rank_test.py
       - run: python3 scripts/measure.py packs/skillax --expect PASS
