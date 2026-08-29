@@ -51,6 +51,11 @@
       "name": "sentinel-audit-lane",
       "path": "skills/sentinel-audit-lane/SKILL.md",
       "job": "Read-only ContextReceipt audits for GitHub and macOS"
+    },
+    {
+      "name": "exact-head-evidence-integrity",
+      "path": "skills/exact-head-evidence-integrity/SKILL.md",
+      "job": "Exact-head PR and CI evidence classification without effect authority"
     }
   ],
   "merged": [
