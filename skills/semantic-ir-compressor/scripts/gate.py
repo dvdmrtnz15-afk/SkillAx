@@ -32,6 +32,21 @@ DECORATIVE_WHY = {
     "na",
     "none",
     "later",
+    "important",
+    "context",
+    "just context",
+}
+
+EMPTY_NEXT = {
+    "tbd",
+    "n/a",
+    "na",
+    "none",
+    "later",
+    "continue",
+    "keep going",
+    "todo",
+    "wip",
 }
 
 OUT_OF_LEASE = re.compile(
@@ -39,13 +54,14 @@ OUT_OF_LEASE = re.compile(
     re.I,
 )
 NO_EVIDENCE = re.compile(
-    r"\b(no world delta|no new sha|organism still|hourly self-prompt)\b",
+    r"\b(no world delta|no new sha|organism still|hourly self-prompt|circadian receipt)\b",
     re.I,
 )
 AMPLIFIER = re.compile(
-    r"\b(we built|we shipped|buyer is|deadline is|guaranteed)\b",
+    r"\b(we built|we shipped|buyer is|deadline is|guaranteed|this is done|marked done)\b",
     re.I,
 )
+HEDGE = re.compile(r"\b(might|maybe|could|claimed|source said)\b", re.I)
 
 
 def _s(value: Any) -> str:
@@ -76,6 +92,8 @@ def gate(frag: dict[str, Any]) -> dict[str, Any]:
         errors.append("missing next_action")
     elif nxt.lower() == idea.lower():
         errors.append("next_action restates idea")
+    elif nxt.lower() in EMPTY_NEXT:
+        errors.append("next_action empty-gesture")
     if not why:
         errors.append("missing why_it_matters")
     elif why.lower() in DECORATIVE_WHY:
@@ -92,12 +110,11 @@ def gate(frag: dict[str, Any]) -> dict[str, Any]:
     blob = " ".join([title, idea, nxt, why, residual])
     if OUT_OF_LEASE.search(blob):
         errors.append("out_of_lease")
-    if NO_EVIDENCE.search(blob) and not nxt:
+    if NO_EVIDENCE.search(blob):
         errors.append("no-evidence pass")
-    if AMPLIFIER.search(idea) and "might" not in idea.lower():
-        warnings.append("possible amplification in idea")
+    if AMPLIFIER.search(idea) and not HEDGE.search(idea):
+        errors.append("amplification in idea")
 
-    incomplete = "missing next_action" in errors
     try:
         impact_n = int(impact) if impact is not None else None
     except (TypeError, ValueError):
@@ -106,10 +123,9 @@ def gate(frag: dict[str, Any]) -> dict[str, Any]:
             errors.append("impact not an int")
 
     admit = not errors
-    if incomplete and impact_n is not None and impact_n >= 8:
-        admit = all(e == "missing next_action" or e.startswith("missing next") for e in errors)
-        if admit:
-            warnings.append("incomplete but high-impact exception")
+    if errors == ["missing next_action"] and impact_n is not None and impact_n >= 8:
+        admit = True
+        warnings.append("incomplete but high-impact exception")
 
     return {
         "ok": admit,
