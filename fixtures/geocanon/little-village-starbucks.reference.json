@@ -1,0 +1,49 @@
+{
+  "scene_contract": {
+    "contract_id": "scene-lv-starbucks-v0",
+    "location_id": "place:starbucks:3105-w-26th-chicago",
+    "requested_time": null,
+    "required_anchors": ["primary_storefront", "adjacent_plaza_context"],
+    "mutable_regions": ["foreground_subject_mask"],
+    "required_gates": ["G_LOCATION_IDENTITY", "G_RIGHTS", "G_SPATIAL", "G_VIEW_CONE", "G_TEMPORAL", "G_SUBJECT_CANON", "G_PROVENANCE"]
+  },
+  "location_passport": {
+    "location_id": "place:starbucks:3105-w-26th-chicago",
+    "canonical_name": "Starbucks Coffee Company — Little Village",
+    "centroid": {"lat": 41.8447, "lon": -87.7028},
+    "osm_ids": [],
+    "aliases": ["Little Village Starbucks", "3105 W 26th St Starbucks"],
+    "adjacent_anchors": ["Little Village Discount Mall", "W 26th Street corridor"],
+    "evidence_node_ids": ["ev-user-reference-set-001", "ev-osm-metadata-001"]
+  },
+  "evidence": [
+    {
+      "evidence_id": "ev-user-reference-set-001",
+      "kind": "image",
+      "content_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "captured_at": null,
+      "acquired_at": "2026-08-29T00:00:00Z",
+      "location": null,
+      "source_uri": null,
+      "rights": {"status":"allowed","source_type":"user_owned","license":null,"terms_uri":null,"permitted_uses":["retrieval","validation","reconstruction","derivative_generation","display"],"notes":"Placeholder hash: replace with hashes of actual user-supplied reference assets before a real receipt."},
+      "derived_from": []
+    },
+    {
+      "evidence_id": "ev-osm-metadata-001",
+      "kind": "map_feature",
+      "content_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "captured_at": null,
+      "acquired_at": "2026-08-29T00:00:00Z",
+      "location": {"lat": 41.8447, "lon": -87.7028},
+      "source_uri": "https://www.openstreetmap.org/",
+      "rights": {"status":"allowed","source_type":"open_data","license":"ODbL-1.0","terms_uri":"https://www.openstreetmap.org/copyright","permitted_uses":["metadata","retrieval","validation"],"notes":"Record attribution/ODbL obligations in production export."},
+      "derived_from": []
+    }
+  ],
+  "rights_manifest": {
+    "verdict": "PASS",
+    "evidence_decisions": {"ev-user-reference-set-001":"allowed", "ev-osm-metadata-001":"allowed"}
+  },
+  "view_cone": null,
+  "grounding_receipt": null
+}
