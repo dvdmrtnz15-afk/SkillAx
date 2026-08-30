@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skillax.dev/spec/geocanon/geocanon.schema.json",
+  "title": "GeoCanon SceneProof Contract",
+  "type": "object",
+  "required": ["scene_contract", "location_passport", "evidence", "rights_manifest"],
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "latlon": {
+      "type": "object",
+      "required": ["lat", "lon"],
+      "properties": {
+        "lat": {"type": "number", "minimum": -90, "maximum": 90},
+        "lon": {"type": "number", "minimum": -180, "maximum": 180}
+      },
+      "additionalProperties": false
+    },
+    "rights": {
+      "type": "object",
+      "required": ["status", "source_type", "permitted_uses"],
+      "properties": {
+        "status": {"enum": ["allowed", "denied", "unknown"]},
+        "source_type": {"enum": ["user_owned", "open_data", "open_licensed", "provider_api", "generated", "other"]},
+        "license": {"type": ["string", "null"]},
+        "terms_uri": {"type": ["string", "null"], "format": "uri"},
+        "permitted_uses": {
+          "type": "array",
+          "items": {"enum": ["metadata", "retrieval", "validation", "reconstruction", "derivative_generation", "display"]},
+          "uniqueItems": true
+        },
+        "notes": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "target_snapshot": {
+      "type": "object",
+      "required": ["as_of", "max_appearance_age_days"],
+      "properties": {
+        "as_of": {"type": "string", "format": "date-time"},
+        "max_appearance_age_days": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "format_contract": {
+      "type": "object",
+      "required": ["image_count", "standalone", "aspect_ratio", "collage", "text_overlay"],
+      "properties": {
+        "image_count": {"type": "integer", "minimum": 1},
+        "standalone": {"type": "boolean"},
+        "aspect_ratio": {"type": "string", "pattern": "^[1-9][0-9]*:[1-9][0-9]*$"},
+        "collage": {"type": "boolean"},
+        "text_overlay": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "render_policy": {
+      "type": "object",
+      "required": ["allowed_modes", "prefer_least_generative"],
+      "properties": {
+        "allowed_modes": {
+          "type": "array",
+          "items": {"enum": ["immutable_plate", "multiview_reconstruction", "constrained_generation"]},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "prefer_least_generative": {"const": true}
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "location_passport": {
+      "type": "object",
+      "required": [
+        "location_id", "canonical_name", "canonical_address", "centroid", "aliases",
+        "zones", "structural_invariants", "semipermanent_invariants",
+        "prohibited_mutations", "evidence_node_ids"
+      ],
+      "properties": {
+        "location_id": {"type": "string", "minLength": 1},
+        "canonical_name": {"type": "string", "minLength": 1},
+        "canonical_address": {"type": "string", "minLength": 1},
+        "centroid": {"$ref": "#/$defs/latlon"},
+        "osm_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "aliases": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "adjacent_anchors": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "zones": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
+        "structural_invariants": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
+        "semipermanent_invariants": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "prohibited_mutations": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "evidence_node_ids": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true}
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "evidence_id", "kind", "role", "authority", "content_hash", "captured_at",
+          "acquired_at", "zone", "temporal_class", "rights", "derived_from"
+        ],
+        "properties": {
+          "evidence_id": {"type": "string", "minLength": 1},
+          "kind": {"enum": ["image", "video", "map_feature", "geometry", "camera_pose", "depth", "segmentation", "metadata", "other"]},
+          "role": {"enum": ["location_plate", "location_geometry", "location_appearance", "persona_identity", "wardrobe", "object_geometry", "lighting_reference", "camera_reference", "negative_reference", "generated_continuity", "metadata"]},
+          "authority": {"enum": ["location_truth", "subject_truth", "object_truth", "capture_reference", "none"]},
+          "content_hash": {"$ref": "#/$defs/sha256"},
+          "captured_at": {"type": ["string", "null"], "format": "date-time"},
+          "acquired_at": {"type": "string", "format": "date-time"},
+          "location": {"anyOf": [{"$ref": "#/$defs/latlon"}, {"type": "null"}]},
+          "zone": {"type": ["string", "null"]},
+          "temporal_class": {"enum": ["structural", "current_appearance", "historical", "transient", "metadata"]},
+          "source_uri": {"type": ["string", "null"]},
+          "rights": {"$ref": "#/$defs/rights"},
+          "derived_from": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+        },
+        "additionalProperties": false
+      }
+    },
+    "rights_manifest": {
+      "type": "object",
+      "required": ["verdict", "evidence_decisions"],
+      "properties": {
+        "verdict": {"enum": ["PASS", "FAIL"]},
+        "evidence_decisions": {"type": "object", "additionalProperties": {"enum": ["allowed", "denied", "unknown"]}}
+      },
+      "additionalProperties": false
+    },
+    "scene_contract": {
+      "type": "object",
+      "required": [
+        "contract_id", "location_id", "zone", "target_snapshot", "required_anchors",
+        "mutable_regions", "format", "render_policy", "required_gates"
+      ],
+      "properties": {
+        "contract_id": {"type": "string", "minLength": 1},
+        "location_id": {"type": "string", "minLength": 1},
+        "zone": {"type": "string", "minLength": 1},
+        "target_snapshot": {"$ref": "#/$defs/target_snapshot"},
+        "required_anchors": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
+        "mutable_regions": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "format": {"$ref": "#/$defs/format_contract"},
+        "render_policy": {"$ref": "#/$defs/render_policy"},
+        "required_gates": {
+          "type": "array",
+          "items": {"enum": ["G_LOCATION_IDENTITY", "G_RIGHTS", "G_SPATIAL", "G_VIEW_CONE", "G_TEMPORAL", "G_SUBJECT_CANON", "G_FORMAT", "G_RENDER_POLICY", "G_OBJECT_INTEGRITY", "G_PROVENANCE"]},
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "view_cone": {
+      "type": ["object", "null"],
+      "properties": {
+        "origin": {"$ref": "#/$defs/latlon"},
+        "yaw_deg": {"type": "number"},
+        "pitch_deg": {"type": "number"},
+        "roll_deg": {"type": "number"},
+        "horizontal_fov_deg": {"type": "number", "exclusiveMinimum": 0, "maximum": 180},
+        "position_uncertainty_m": {"type": "number", "minimum": 0},
+        "orientation_uncertainty_deg": {"type": "number", "minimum": 0},
+        "visible_anchors": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "may_be_visible": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "must_not_be_visible": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      },
+      "additionalProperties": false
+    },
+    "render_plan": {
+      "type": ["object", "null"],
+      "properties": {
+        "plan_version": {"type": "string"},
+        "contract_hash": {"$ref": "#/$defs/sha256"},
+        "location_id": {"type": "string"},
+        "zone": {"type": "string"},
+        "render_mode": {"enum": ["immutable_plate", "multiview_reconstruction", "constrained_generation"]},
+        "evidence_ids": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
+        "immutable_anchors": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "mutable_regions": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "target_snapshot": {"$ref": "#/$defs/target_snapshot"},
+        "format": {"$ref": "#/$defs/format_contract"}
+      },
+      "additionalProperties": false
+    },
+    "grounding_receipt": {
+      "type": ["object", "null"],
+      "properties": {
+        "receipt_version": {"type": "string"},
+        "contract_hash": {"$ref": "#/$defs/sha256"},
+        "render_plan_hash": {"$ref": "#/$defs/sha256"},
+        "render_mode": {"enum": ["immutable_plate", "multiview_reconstruction", "constrained_generation"]},
+        "output_hash": {"$ref": "#/$defs/sha256"},
+        "evidence_hashes": {"type": "array", "items": {"$ref": "#/$defs/sha256"}, "uniqueItems": true},
+        "gate_results": {"type": "object", "additionalProperties": {"enum": ["PASS", "FAIL", "NOT_APPLICABLE"]}},
+        "transformations": {"type": "array", "items": {"type": "object"}},
+        "software": {"type": "array", "items": {"type": "object"}},
+        "verdict": {"enum": ["GROUNDED", "PARTIALLY_GROUNDED", "REJECTED"]}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
