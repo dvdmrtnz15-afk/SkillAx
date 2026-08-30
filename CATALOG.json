@@ -51,6 +51,11 @@
       "name": "sentinel-audit-lane",
       "path": "skills/sentinel-audit-lane/SKILL.md",
       "job": "Read-only ContextReceipt audits for GitHub and macOS"
+    },
+    {
+      "name": "causal-reality-engine",
+      "path": "skills/causal-reality-engine/SKILL.md",
+      "job": "Causally coherent realism for generated artifacts and embodied scenes"
     }
   ],
   "merged": [

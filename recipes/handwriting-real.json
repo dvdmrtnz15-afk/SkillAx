@@ -1,0 +1,10 @@
+{
+  "name": "handwriting-real",
+  "job": "Produce or evaluate persistent handwriting as embodied motor output interacting with a writing tool, substrate, time, and capture conditions.",
+  "slots": [
+    {"skill":"persistent-character-world-system","emits":"Stable writer identity and product-owned continuity constraints without graphology inference."},
+    {"skill":"causal-reality-engine","emits":"Pen/ink/substrate/contact/time causal graph, counterfactuals, imperfection budget, and authority-none receipt."}
+  ],
+  "forbid": ["personality inference from handwriting", "cloned glyph noise", "decorative smudges without causal history"],
+  "promote": "Promote only if handwriting-specific procedures prove reusable across at least two independent consumers beyond this recipe."
+}

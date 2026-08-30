@@ -1,0 +1,10 @@
+{
+  "name": "embodied-character-realism",
+  "job": "Maintain a persistent character while generating physically and socially plausible embodied behavior across scenes and media.",
+  "slots": [
+    {"skill":"persistent-character-world-system","emits":"Identity, relationship, aesthetic, and long-horizon continuity constraints."},
+    {"skill":"causal-reality-engine","emits":"Motor/tool/material/environment/time/capture causal constraints plus counterfactual and imperfection checks."}
+  ],
+  "forbid": ["relationship rewrites by the realism layer", "unexplained physical residue", "PASS-as-effect-authority"],
+  "promote": "Keep as a recipe unless a new generic job emerges that is distinct from continuity and causal realism."
+}

@@ -1,0 +1,10 @@
+{
+  "skill": "causal-reality-engine",
+  "axioms": [
+    {"id":"cr-job","type":"job","text":"Evaluate or specify observable realism from explicit causal world-state transitions rather than decorative imperfection."},
+    {"id":"cr-refuse-inference","type":"refuse","text":"Never infer personality, diagnosis, identity, honesty, or mental state from handwriting, appearance, wear, gesture, or other generated artifacts."},
+    {"id":"cr-bind-continuity","type":"bind","text":"Consume persistent identity and relationship constraints from their owning system; do not redefine product canon inside this skill."},
+    {"id":"cr-safety-parent","type":"safety","text":"Reject consequential visible effects with no causal parent and reject causal cycles within a compiled episode."},
+    {"id":"cr-refuse-authority","type":"refuse","text":"A realism PASS is evidence only and never grants publish, merge, deploy, identity-mutation, policy-promotion, or other effect authority."}
+  ]
+}

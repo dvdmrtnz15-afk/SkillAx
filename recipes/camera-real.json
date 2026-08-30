@@ -1,0 +1,10 @@
+{
+  "name": "camera-real",
+  "job": "Produce or evaluate camera-captured realism while separating world-state causes from optics, sensor, computational photography, compression, and operator behavior.",
+  "slots": [
+    {"skill":"persistent-character-world-system","emits":"Persistent character, relationship, location, and continuity constraints when a recurring world is involved."},
+    {"skill":"causal-reality-engine","emits":"World-to-capture causal graph, counterfactual capture checks, bounded defects, and authority-none receipt."}
+  ],
+  "forbid": ["random camera defects unrelated to capture conditions", "continuity-breaking object teleportation", "identity mutation from a realism evaluator"],
+  "promote": "Promote only after camera-specific procedural knowledge has at least two independent consumers and cannot remain a recipe profile."
+}
