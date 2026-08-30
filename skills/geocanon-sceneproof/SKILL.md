@@ -5,91 +5,101 @@ description: Ground generated or edited visual scenes in a specific real-world p
 
 # GeoCanon / SceneProof
 
-GeoCanon is an evidence-governance skill for real-world scene grounding. It does not grant authority to generate a scene merely because references exist. It compiles admissible evidence into a SceneContract and emits a GroundingReceipt only when hard gates pass.
+GeoCanon is an evidence-governance skill for real-world scene grounding. It compiles admissible evidence into a `SceneContract`, chooses the least-generative supported render path, and permits a `GroundingReceipt` only when every required hard gate passes.
 
-## Core invariant
+## Core Mandate
 
-A scene is grounded only when all of the following are supported: exact place identity, admissible source rights, required spatial relationships, physically plausible requested view, temporal compatibility, reproducible transformations, and traceable provenance. Resemblance alone is insufficient.
+A scene is grounded only when exact place identity, source rights, spatial structure, camera support, temporal compatibility, output format, render policy, subject/object continuity when applicable, and provenance are all supported. Visual resemblance alone never establishes truth, and no weighted score may compensate for a failed hard gate.
 
-## Architecture boundary
+SkillAx distributes the schema, policy, fixtures, deterministic helper scripts, and evaluation contract. It is not the authority or publishing plane. Proof/admission belongs to the consuming proof kernel; evidence cannot self-promote into canon, memory, or execution authority.
 
-SkillAx distributes the portable schema, skill, adapters, fixtures, and evaluation contract. It is not the authority/control plane. Proof/admission belongs to the consuming proof kernel. Runtime/world-model systems consume receipts; evidence never self-promotes into canon or authority.
+## Operating Principles
 
-## Required objects
+- Type every source by evidence role and authority scope before it enters a render request.
+- Give generated continuity assets zero truth authority.
+- Fail closed on unknown, omitted, or contradictory rights.
+- Keep interior and exterior zones separate and reject unsupported view cones.
+- Freeze one temporal snapshot; current appearance cannot be inferred from stale sources.
+- Prefer immutable plate insertion, then licensed multiview reconstruction, then constrained generation.
+- When a usable immutable location plate exists, do not redraw the location.
+- Permit edits only inside declared mutable regions and preserve declared anchors.
+- Treat Google Maps and Street View as verification surfaces or permitted metadata sources, never as an unlicensed pixel corpus.
+- Return the visual asset separately from its deterministic receipt.
 
-- `EvidenceNode`: immutable source observation plus hash, capture time, geospatial metadata, rights, and permitted uses.
-- `RightsManifest`: aggregate admissibility decision for all evidence in a build.
-- `LocationPassport`: resolved place identity, coordinates, OSM identifiers, aliases, adjacent anchors, and evidence graph.
-- `SceneContract`: requested place/time/view/subject constraints and required invariants.
-- `ViewCone`: camera origin/orientation/FOV plus uncertainty and visible anchors.
-- `TemporalSnapshot`: requested time and compatible evidence interval.
-- `GroundingReceipt`: hashes of contract/evidence/output, gate results, transformations, software/model identifiers, and final verdict.
+## Required Objects
+
+- `EvidenceNode`: immutable observation with role, authority, hash, capture time, zone, rights, permitted uses, and lineage.
+- `RightsManifest`: exact admissibility decision for every evidence node.
+- `LocationPassport`: place identity, address, coordinates, zones, invariants, prohibited mutations, and evidence graph.
+- `SceneContract`: requested location zone, target snapshot, output format, anchors, mutable regions, render policy, and required gates.
+- `ViewCone`: camera pose/FOV uncertainty plus required, visible, optional, and prohibited anchors.
+- `RenderPlan`: deterministic selected mode, evidence IDs, immutable anchors, mutable regions, format, and contract hash.
+- `GroundingReceipt`: contract/render/evidence/output hashes, gate results, transformations, software identifiers, render mode, and verdict.
 
 Schemas live in `spec/geocanon/`.
 
-## Evidence policy
+## Evidence Policy
 
 Default allowlist:
 
-1. User-owned/user-supplied imagery with sufficient permission.
-2. OpenStreetMap-derived place/geometry metadata under applicable ODbL obligations.
-3. Explicitly licensed/open imagery whose license permits the intended operation.
-4. Provider APIs only within their terms and the recorded permitted-use scope.
+1. User-owned or user-supplied imagery with sufficient permission.
+2. OpenStreetMap-derived place and geometry metadata under applicable ODbL obligations.
+3. Explicitly licensed imagery whose license permits the intended operation.
+4. Provider APIs only within recorded terms and permitted-use scope.
 
-Google Maps/Street View imagery is excluded from training, reconstruction, validation, derivative generation, and pixel-producing paths unless a future policy module proves an explicitly permitted use. Do not scrape it.
+Evidence roles are not interchangeable. `location_plate`, `location_geometry`, and `location_appearance` may establish location truth when rights and temporal constraints pass. `persona_identity`, `object_geometry`, `lighting_reference`, and `camera_reference` establish only their declared scope. `generated_continuity` always has `authority: none`.
+
+Google Maps or Street View pixels are excluded from training, validation, reconstruction, derivative generation, and other pixel-producing paths. Do not scrape or export them. Permitted metadata use must remain separately declared.
 
 ## Pipeline
 
-1. Resolve place -> `LocationPassport`.
-2. Ingest evidence -> immutable `EvidenceNode`s.
-3. Evaluate rights -> `RightsManifest`; fail closed on unknown rights.
-4. Select a `TemporalSnapshot` compatible with the request.
-5. Estimate/register camera and structure -> `ViewCone` with uncertainty.
-6. Compile request + evidence -> `SceneContract`.
-7. Produce an immutable location plate or geometry-conditioned representation.
-8. Composite/generate only inside the contract's mutable regions; preserve hard anchors.
-9. Run hard gates: location, rights, spatial structure, view cone, temporal compatibility, persona/subject continuity when applicable, and provenance completeness.
-10. Emit `GroundingReceipt`. A failed hard gate means `REJECT`, not a weighted average pass.
+1. Resolve place and load the `LocationPassport`.
+2. Ingest sources as typed, hashed `EvidenceNode`s.
+3. Evaluate rights and emit a fail-closed `RightsManifest`.
+4. Freeze the requested temporal snapshot.
+5. Validate zone, anchors, camera support, and evidence graph.
+6. Compile the `SceneContract`.
+7. Route to `immutable_plate`, `multiview_reconstruction`, or `constrained_generation` in that order.
+8. Generate or composite only inside declared mutable regions.
+9. Run all required hard gates.
+10. Emit a receipt only when contract, render plan, evidence, output, and gate results agree.
 
-## Recommended adapters
+## Render Routing
 
-Adapters are optional capability providers, not trusted authorities:
+- `immutable_plate`: requires an admissible, zone-matching location plate permitting derivative generation and display.
+- `multiview_reconstruction`: requires at least two admissible, zone-matching reconstruction sources.
+- `constrained_generation`: requires admissible geometry plus appearance evidence and explicit policy permission.
+- No admissible route means `REJECTED`.
 
-- Place/geometry: OSM, Nominatim, Overpass.
-- Open street imagery: KartaView, Wikimedia Commons; Mapillary only according to current API/license terms.
-- Registration/localization: HLoc, LightGlue, pycolmap/COLMAP.
-- Reconstruction: COLMAP first; OpenMVG/OpenMVS or AliceVision as alternatives.
-- Dense/novel-view production: NeRF/3D Gaussian Splatting only after the evidence governor is working and rights permit it.
-- Retrieval/place recognition: DINO/CLIP-family embeddings, NetVLAD/CosPlace/MixVPR-class methods.
-- Geometry conditioning: depth/segmentation/edges and compatible ControlNet-style conditioning.
-- Provenance: C2PA-compatible manifest plus internal receipt hash chain.
+Adapters such as OSM/Nominatim, HLoc, LightGlue, COLMAP, segmentation, compositing, NeRF, or Gaussian splatting remain optional capability providers. They submit evidence or evaluator results; they do not decide authority.
 
-Pin adapter versions and record executable/model hashes in receipts.
+## MVP Reference Slice
 
-## MVP reference slice
+The first regression target is Starbucks Coffee Company at 3105 W 26th St in Chicago's Little Village plaza. The repository fixture contains metadata and placeholder hashes only; user images are not committed. The reference route must choose an immutable user-owned exterior plate, preserve storefront/entrance/parking/plaza anchors, permit only the foreground subject mask to change, and reject generic or mixed-zone architecture.
 
-First reference target: Little Village Starbucks, Chicago. Use user-owned imagery plus OSM-derived metadata. Localize/register references with HLoc/LightGlue and COLMAP where feasible. Freeze an immutable background/location plate, permit character compositing only in declared mutable masks, validate view-cone/structure/rights/temporal gates, then emit a receipt.
+## Hard Gates
 
-## Hard gates
+- `G_LOCATION_IDENTITY`: contract and passport identify the same exact place.
+- `G_RIGHTS`: every dependency is explicitly allowed for its operation.
+- `G_SPATIAL`: required anchors, zone, adjacency, and structural relationships remain supported.
+- `G_VIEW_CONE`: the requested camera view is supported within declared uncertainty.
+- `G_TEMPORAL`: evidence is compatible with the target snapshot.
+- `G_SUBJECT_CANON`: persistent-character identity and relationship constraints pass externally when applicable.
+- `G_FORMAT`: output is exactly the contracted standalone asset shape.
+- `G_RENDER_POLICY`: the least-generative admissible mode is selected.
+- `G_OBJECT_INTEGRITY`: object and anatomy integrity pass externally when applicable.
+- `G_PROVENANCE`: hashes, source IDs, transformations, software identifiers, and gate results are complete.
 
-- `G_LOCATION_IDENTITY`: resolved place must match contract.
-- `G_RIGHTS`: every pixel/evidence dependency must have a permitted-use decision; unknown is failure.
-- `G_SPATIAL`: required anchors and relative geometry remain within declared tolerances.
-- `G_VIEW_CONE`: requested camera must be supported by evidence/reconstruction and uncertainty bounds.
-- `G_TEMPORAL`: evidence snapshot is compatible with requested scene time or explicitly marked historical/uncertain.
-- `G_SUBJECT_CANON`: when persistent characters are present, immutable identity traits and relationship/canon constraints pass the consuming character-world evaluator.
-- `G_PROVENANCE`: source IDs, hashes, transformations, model/software hashes, output hash, and gate results are complete.
+## Evaluation Behavior
 
-## Evaluation behavior
+Treat failed candidates as optimization evidence, but never relax a hard gate to admit them. Promote repeated failures into explicit invariants and regression fixtures. Separate photographic realism from geographic truth: a persuasive image may still be geographically false.
 
-Treat earlier failed candidates as useful optimization trajectory, but never relax a hard gate to make a candidate pass. Promote repeated failure patterns into explicit invariants and regression fixtures. Separate photographic realism from geographic truth: a visually convincing image can still fail grounding.
+## Output Contract
 
-## Output contract
+Return the generated asset separately from its receipt. Human-facing states are:
 
-Return the generated asset separately from its receipt. Human-facing metadata should distinguish:
+- `GROUNDED`: every required hard gate passed.
+- `PARTIALLY_GROUNDED`: useful evidence exists but an exact claim was intentionally weakened; never present it as exact truth.
+- `REJECTED`: one or more hard gates failed.
 
-- `GROUNDED`: all hard gates passed.
-- `PARTIALLY_GROUNDED`: useful evidence exists but at least one requested claim is intentionally weakened/omitted; never present as exact truth.
-- `REJECTED`: a hard gate failed.
-
-Never claim exact real-world grounding without a `GROUNDED` receipt.
+Never claim exact real-world grounding without a coherent `GROUNDED` receipt.

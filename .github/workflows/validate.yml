@@ -16,3 +16,4 @@ jobs:
       - run: python3 skills/sentinel-audit-lane/scripts/test_scan.py
       - run: python3 scripts/geocanon_validate.py fixtures/geocanon/little-village-starbucks.reference.json
       - run: python3 scripts/geocanon_test.py
+      - run: python3 scripts/geocanon_compile.py fixtures/geocanon/little-village-starbucks.reference.json --out /tmp/geocanon-plan.json
