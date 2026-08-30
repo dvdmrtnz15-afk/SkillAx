@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skillax.dev/spec/geocanon/geocanon.schema.json",
+  "title": "GeoCanon SceneProof Contract",
+  "type": "object",
+  "required": ["scene_contract", "location_passport", "evidence", "rights_manifest"],
+  "$defs": {
+    "sha256": {"type":"string","pattern":"^[a-f0-9]{64}$"},
+    "latlon": {
+      "type":"object",
+      "required":["lat","lon"],
+      "properties":{"lat":{"type":"number","minimum":-90,"maximum":90},"lon":{"type":"number","minimum":-180,"maximum":180}},
+      "additionalProperties":false
+    },
+    "rights": {
+      "type":"object",
+      "required":["status","source_type","permitted_uses"],
+      "properties":{
+        "status":{"enum":["allowed","denied","unknown"]},
+        "source_type":{"enum":["user_owned","open_data","open_licensed","provider_api","other"]},
+        "license":{"type":["string","null"]},
+        "terms_uri":{"type":["string","null"],"format":"uri"},
+        "permitted_uses":{"type":"array","items":{"enum":["metadata","retrieval","validation","reconstruction","derivative_generation","display"]},"uniqueItems":true},
+        "notes":{"type":"string"}
+      },
+      "additionalProperties":false
+    }
+  },
+  "properties": {
+    "location_passport": {
+      "type":"object",
+      "required":["location_id","canonical_name","centroid","aliases","evidence_node_ids"],
+      "properties":{
+        "location_id":{"type":"string","minLength":1},
+        "canonical_name":{"type":"string","minLength":1},
+        "centroid":{"$ref":"#/$defs/latlon"},
+        "osm_ids":{"type":"array","items":{"type":"string"},"uniqueItems":true},
+        "aliases":{"type":"array","items":{"type":"string"}},
+        "adjacent_anchors":{"type":"array","items":{"type":"string"}},
+        "evidence_node_ids":{"type":"array","items":{"type":"string"},"minItems":1,"uniqueItems":true}
+      },
+      "additionalProperties":false
+    },
+    "evidence": {
+      "type":"array","minItems":1,
+      "items":{
+        "type":"object",
+        "required":["evidence_id","kind","content_hash","rights","acquired_at"],
+        "properties":{
+          "evidence_id":{"type":"string"},
+          "kind":{"enum":["image","video","map_feature","geometry","camera_pose","depth","segmentation","metadata","other"]},
+          "content_hash":{"$ref":"#/$defs/sha256"},
+          "captured_at":{"type":["string","null"],"format":"date-time"},
+          "acquired_at":{"type":"string","format":"date-time"},
+          "location":{"anyOf":[{"$ref":"#/$defs/latlon"},{"type":"null"}]},
+          "source_uri":{"type":["string","null"]},
+          "rights":{"$ref":"#/$defs/rights"},
+          "derived_from":{"type":"array","items":{"type":"string"},"uniqueItems":true}
+        },
+        "additionalProperties":false
+      }
+    },
+    "rights_manifest": {
+      "type":"object",
+      "required":["verdict","evidence_decisions"],
+      "properties":{
+        "verdict":{"enum":["PASS","FAIL"]},
+        "evidence_decisions":{"type":"object","additionalProperties":{"enum":["allowed","denied","unknown"]}}
+      },
+      "additionalProperties":false
+    },
+    "scene_contract": {
+      "type":"object",
+      "required":["contract_id","location_id","requested_time","required_gates","mutable_regions"],
+      "properties":{
+        "contract_id":{"type":"string"},
+        "location_id":{"type":"string"},
+        "requested_time":{"type":["string","null"],"format":"date-time"},
+        "required_anchors":{"type":"array","items":{"type":"string"},"uniqueItems":true},
+        "mutable_regions":{"type":"array","items":{"type":"string"}},
+        "required_gates":{"type":"array","items":{"enum":["G_LOCATION_IDENTITY","G_RIGHTS","G_SPATIAL","G_VIEW_CONE","G_TEMPORAL","G_SUBJECT_CANON","G_PROVENANCE"]},"minItems":1,"uniqueItems":true}
+      },
+      "additionalProperties":false
+    },
+    "view_cone": {
+      "type":["object","null"],
+      "properties":{
+        "origin":{"$ref":"#/$defs/latlon"},
+        "yaw_deg":{"type":"number"},"pitch_deg":{"type":"number"},"roll_deg":{"type":"number"},
+        "horizontal_fov_deg":{"type":"number","exclusiveMinimum":0,"maximum":180},
+        "position_uncertainty_m":{"type":"number","minimum":0},
+        "orientation_uncertainty_deg":{"type":"number","minimum":0},
+        "visible_anchors":{"type":"array","items":{"type":"string"}}
+      },
+      "additionalProperties":false
+    },
+    "grounding_receipt": {
+      "type":["object","null"],
+      "properties":{
+        "receipt_version":{"type":"string"},
+        "contract_hash":{"$ref":"#/$defs/sha256"},
+        "output_hash":{"$ref":"#/$defs/sha256"},
+        "evidence_hashes":{"type":"array","items":{"$ref":"#/$defs/sha256"},"uniqueItems":true},
+        "gate_results":{"type":"object","additionalProperties":{"enum":["PASS","FAIL","NOT_APPLICABLE"]}},
+        "transformations":{"type":"array","items":{"type":"object"}},
+        "software":{"type":"array","items":{"type":"object"}},
+        "verdict":{"enum":["GROUNDED","PARTIALLY_GROUNDED","REJECTED"]}
+      },
+      "additionalProperties":false
+    }
+  },
+  "additionalProperties":false
+}
