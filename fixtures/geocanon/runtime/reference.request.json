@@ -1,0 +1,89 @@
+{
+  "adapter": {
+    "name": "stdlib-netpbm-reference",
+    "version": "0.1"
+  },
+  "contract_hash": "29571f4cbd68470dbd9c487ebb0ebad3433ca53027196786382d5c4c82327c22",
+  "job_id": "runtime-reference-v0",
+  "mutable_region": {
+    "mask": {
+      "content_hash": "1078f999427c8c4ba5f5574fb9f63e8ae6506319330acd16f8d2d7845714f692",
+      "height_px": 6,
+      "media_type": "image/x-portable-graymap",
+      "path": "assets/mutable-mask.pgm",
+      "width_px": 6
+    },
+    "region_id": "foreground_subject_mask"
+  },
+  "plate": {
+    "content_hash": "1876da09f3a643e8cccaf4e571b24b3dafdc99dd070e45d2e817a667bc86e1f3",
+    "evidence_id": "ev-runtime-plate-001",
+    "height_px": 6,
+    "media_type": "image/x-portable-pixmap",
+    "path": "assets/plate.ppm",
+    "width_px": 6
+  },
+  "policy": {
+    "max_mutable_fraction": 0.5,
+    "preserve_immutable_pixels": true
+  },
+  "render_mode": "immutable_plate",
+  "runtime_version": "0.1",
+  "stages": [
+    "verify_inputs",
+    "segment_subjects",
+    "photometric_relight",
+    "contact_shadow",
+    "occlusion_repair",
+    "composite",
+    "evaluate_integrity"
+  ],
+  "subjects": [
+    {
+      "contact_shadow": {
+        "blur_radius": 0,
+        "offset_x": 0,
+        "offset_y": 1,
+        "opacity": 0.25
+      },
+      "image": {
+        "content_hash": "c971911305dc6351c7eafedec046d9648f46de4acb22967db0d3454bb9e8747f",
+        "height_px": 2,
+        "media_type": "image/x-portable-pixmap",
+        "path": "assets/subject.ppm",
+        "width_px": 2
+      },
+      "occlusion_mask": {
+        "content_hash": "1636c494ef7e35c0fc0f7b8c58bfface18c40ee13f49abfc1f68d414d853616f",
+        "height_px": 2,
+        "media_type": "image/x-portable-graymap",
+        "path": "assets/occlusion-mask.pgm",
+        "width_px": 2
+      },
+      "placement": {
+        "x": 2,
+        "y": 2
+      },
+      "relight": {
+        "bias": [
+          0,
+          0,
+          0
+        ],
+        "gain": [
+          1.1,
+          0.9,
+          1.0
+        ]
+      },
+      "segmentation_mask": {
+        "content_hash": "be9e417e5181b1d4dcd05e3a5d699f8884286fa99c93b1d94e2625734bb9dd15",
+        "height_px": 2,
+        "media_type": "image/x-portable-graymap",
+        "path": "assets/subject-mask.pgm",
+        "width_px": 2
+      },
+      "subject_id": "subject-solara-test"
+    }
+  ]
+}

@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skillax.dev/spec/geocanon/geocanon-runtime.schema.json",
+  "title": "GeoCanon Runtime Adapter Contract",
+  "description": "Portable request/result contract for immutable-plate compositing adapters. Runtime observations are advisory and cannot mint grounding verdicts or mutate canon.",
+  "oneOf": [
+    {"$ref": "#/$defs/runtime_request"},
+    {"$ref": "#/$defs/runtime_result"}
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["path", "content_hash", "width_px", "height_px", "media_type"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "content_hash": {"$ref": "#/$defs/sha256"},
+        "width_px": {"type": "integer", "minimum": 1},
+        "height_px": {"type": "integer", "minimum": 1},
+        "media_type": {
+          "enum": ["image/x-portable-pixmap", "image/x-portable-graymap"]
+        },
+        "evidence_id": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "plate_artifact": {
+      "allOf": [
+        {"$ref": "#/$defs/artifact"},
+        {
+          "type": "object",
+          "required": ["evidence_id"],
+          "properties": {"evidence_id": {"type": "string", "minLength": 1}}
+        }
+      ]
+    },
+    "subject": {
+      "type": "object",
+      "required": [
+        "subject_id",
+        "image",
+        "segmentation_mask",
+        "placement",
+        "relight",
+        "contact_shadow"
+      ],
+      "properties": {
+        "subject_id": {"type": "string", "minLength": 1},
+        "image": {"$ref": "#/$defs/artifact"},
+        "segmentation_mask": {"$ref": "#/$defs/artifact"},
+        "occlusion_mask": {
+          "oneOf": [
+            {"$ref": "#/$defs/artifact"},
+            {"type": "null"}
+          ]
+        },
+        "placement": {
+          "type": "object",
+          "required": ["x", "y"],
+          "properties": {
+            "x": {"type": "integer", "minimum": 0},
+            "y": {"type": "integer", "minimum": 0}
+          },
+          "additionalProperties": false
+        },
+        "relight": {
+          "type": "object",
+          "required": ["gain", "bias"],
+          "properties": {
+            "gain": {
+              "type": "array",
+              "prefixItems": [
+                {"type": "number", "minimum": 0, "maximum": 4},
+                {"type": "number", "minimum": 0, "maximum": 4},
+                {"type": "number", "minimum": 0, "maximum": 4}
+              ],
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "bias": {
+              "type": "array",
+              "prefixItems": [
+                {"type": "number", "minimum": -255, "maximum": 255},
+                {"type": "number", "minimum": -255, "maximum": 255},
+                {"type": "number", "minimum": -255, "maximum": 255}
+              ],
+              "minItems": 3,
+              "maxItems": 3
+            }
+          },
+          "additionalProperties": false
+        },
+        "contact_shadow": {
+          "type": "object",
+          "required": ["offset_x", "offset_y", "opacity", "blur_radius"],
+          "properties": {
+            "offset_x": {"type": "integer"},
+            "offset_y": {"type": "integer"},
+            "opacity": {"type": "number", "minimum": 0, "maximum": 1},
+            "blur_radius": {"type": "integer", "minimum": 0, "maximum": 16}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "runtime_request": {
+      "type": "object",
+      "required": [
+        "runtime_version",
+        "job_id",
+        "contract_hash",
+        "render_mode",
+        "adapter",
+        "plate",
+        "mutable_region",
+        "subjects",
+        "stages",
+        "policy"
+      ],
+      "properties": {
+        "runtime_version": {"const": "0.1"},
+        "job_id": {"type": "string", "minLength": 1},
+        "contract_hash": {"$ref": "#/$defs/sha256"},
+        "render_mode": {"const": "immutable_plate"},
+        "adapter": {
+          "type": "object",
+          "required": ["name", "version"],
+          "properties": {
+            "name": {"const": "stdlib-netpbm-reference"},
+            "version": {"const": "0.1"}
+          },
+          "additionalProperties": false
+        },
+        "plate": {"$ref": "#/$defs/plate_artifact"},
+        "mutable_region": {
+          "type": "object",
+          "required": ["region_id", "mask"],
+          "properties": {
+            "region_id": {"type": "string", "minLength": 1},
+            "mask": {"$ref": "#/$defs/artifact"}
+          },
+          "additionalProperties": false
+        },
+        "subjects": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/subject"}
+        },
+        "stages": {
+          "type": "array",
+          "prefixItems": [
+            {"const": "verify_inputs"},
+            {"const": "segment_subjects"},
+            {"const": "photometric_relight"},
+            {"const": "contact_shadow"},
+            {"const": "occlusion_repair"},
+            {"const": "composite"},
+            {"const": "evaluate_integrity"}
+          ],
+          "minItems": 7,
+          "maxItems": 7
+        },
+        "policy": {
+          "type": "object",
+          "required": ["preserve_immutable_pixels", "max_mutable_fraction"],
+          "properties": {
+            "preserve_immutable_pixels": {"const": true},
+            "max_mutable_fraction": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "exclusiveMaximum": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "stage_artifact": {
+      "type": "object",
+      "required": ["artifact_id", "kind", "content_hash"],
+      "properties": {
+        "artifact_id": {"type": "string", "minLength": 1},
+        "kind": {"type": "string", "minLength": 1},
+        "content_hash": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "observation": {
+      "type": "object",
+      "required": ["status", "basis"],
+      "properties": {
+        "status": {"enum": ["PASS", "FAIL", "UNKNOWN"]},
+        "basis": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "runtime_result": {
+      "type": "object",
+      "required": [
+        "runtime_version",
+        "job_id",
+        "contract_hash",
+        "render_mode",
+        "plate_hash",
+        "output_hash",
+        "stage_artifacts",
+        "integrity",
+        "evaluation_submission",
+        "result_hash"
+      ],
+      "properties": {
+        "runtime_version": {"const": "0.1"},
+        "job_id": {"type": "string", "minLength": 1},
+        "contract_hash": {"$ref": "#/$defs/sha256"},
+        "render_mode": {"const": "immutable_plate"},
+        "plate_hash": {"$ref": "#/$defs/sha256"},
+        "output_hash": {"$ref": "#/$defs/sha256"},
+        "stage_artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/stage_artifact"}
+        },
+        "integrity": {
+          "type": "object",
+          "required": [
+            "dimensions_match_plate",
+            "mutable_fraction",
+            "immutable_pixel_hash_before",
+            "immutable_pixel_hash_after",
+            "immutable_pixels_unchanged",
+            "subject_count"
+          ],
+          "properties": {
+            "dimensions_match_plate": {"type": "boolean"},
+            "mutable_fraction": {"type": "number", "minimum": 0, "maximum": 1},
+            "immutable_pixel_hash_before": {"$ref": "#/$defs/sha256"},
+            "immutable_pixel_hash_after": {"$ref": "#/$defs/sha256"},
+            "immutable_pixels_unchanged": {"type": "boolean"},
+            "subject_count": {"type": "integer", "minimum": 0}
+          },
+          "additionalProperties": false
+        },
+        "evaluation_submission": {
+          "type": "object",
+          "required": ["authority", "observations"],
+          "properties": {
+            "authority": {"const": "advisory_only"},
+            "observations": {
+              "type": "object",
+              "propertyNames": {
+                "enum": [
+                  "G_LOCATION_IDENTITY",
+                  "G_RIGHTS",
+                  "G_SPATIAL",
+                  "G_VIEW_CONE",
+                  "G_TEMPORAL",
+                  "G_SUBJECT_CANON",
+                  "G_PROVENANCE"
+                ]
+              },
+              "additionalProperties": {"$ref": "#/$defs/observation"}
+            }
+          },
+          "additionalProperties": false
+        },
+        "result_hash": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

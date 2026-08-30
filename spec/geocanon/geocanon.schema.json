@@ -104,6 +104,9 @@
         "gate_results":{"type":"object","additionalProperties":{"enum":["PASS","FAIL","NOT_APPLICABLE"]}},
         "transformations":{"type":"array","items":{"type":"object"}},
         "software":{"type":"array","items":{"type":"object"}},
+        "runtime_job_id":{"type":"string","minLength":1},
+        "runtime_result_hash":{"$ref":"#/$defs/sha256"},
+        "render_mode":{"enum":["immutable_plate","multiview_reconstruction","constrained_generation"]},
         "verdict":{"enum":["GROUNDED","PARTIALLY_GROUNDED","REJECTED"]}
       },
       "additionalProperties":false
